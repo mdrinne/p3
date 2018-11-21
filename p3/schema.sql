@@ -1,100 +1,109 @@
-drop table if exists ORDERS;
-drop table if exists PLAYS_AT;
-drop table if exists PREFERS;
-drop table if exists PAYMENT_INFO;
-drop table if exists THEATER;
-drop table if exists MOVIE;
+drop table if exists MANAGER;
+drop table if exists CUSTOMER;
 drop table if exists REVIEW;
-drop table if exists USER;
+drop table if exists PAYMENT_INFO;
+drop table if exists ORDERS;
+drop table if exists MOVIE;
+drop table if exists PLAYS_AT;
+drop table if exists SHOWTIME;
+drop table if exists THEATER;
 drop table if exists SYSTEM_INFO;
+drop table if exists PREFERS;
 
-
-create table SYSTEM_INFO (
-  cancellation_fee int primary key,
-  child_discount int,
-  senior_discount int,
-  manager_password varchar[25]
+create table MANAGER (
+  username varchar[30] not null primary key,
+  email varchar[60] not null unique,
+  password varchar[30] not null
 );
 
-create table USER (
+create table CUSTOMER (
   username varchar[30] not null primary key,
-  password varchar[30] not null,
-  email varchar[50] not null
+  email varchar[60] not null unique,
+  password varchar[30] not null
 );
 
 create table REVIEW (
-  title varchar[30] not null,
-  review_ID int not null primary key,
+  review_ID integer primary key autoincrement,
+  title varchar[60] not null,
   comment text,
   rating int,
+  username varchar[30] not null
+);
+
+create table PAYMENT_INFO (
+  card_no int not null primary key,
+  cvv int not null,
+  name_on_card varchar[50] not null,
+  expiration_date varchar[5] not null,
+  saved boolean not null,
   username varchar[30] not null,
-  movie_title varchar[100] not null,
-  constraint REVIEWUSER foreign key(username) references USER(username) on delete set null on update cascade,
-  constraint MOVIETITLE foreign key(movie_title) references MOVIE(title) on delete cascade on update cascade
+  constraint PAYMENTUSER foreign key(username) references USER(username) on delete cascade on update cascade
+);
+
+create table ORDERS (
+  order_ID integer primary key autoincrement,
+  o_date date not null,
+  senior_tickets int not null,
+  child_tickets int not null,
+  adult_tickets int not null,
+  total_tickets int not null,
+  o_time time not null,
+  status varchar[30],
+  card_number int not null,
+  username varchar[30] not null,
+  title varchar[100] not null,
+  theater_id int not null,
+  constraint ORDERCARD foreign key(card_number) references PAYMENT_INFO(card_number) on delete set null on update cascade,
+  constraint ORDERUSER foreign key(username) references USER(username) on delete set null on update cascade,
+  constraint ORDERTITLE foreign key(title) references MOVIE(title) on delete set null on update cascade,
+  constraint ORDERTHEATER foreign key(theater_id) references THEATER(theater_id) on delete set null on update cascade
 );
 
 create table MOVIE (
   title varchar[100] not null primary key,
-  rating varchar[5],
-  genre varchar[30] not null,
-  length int not null,
-  avg_rating int,
-  cast varchar[256],
+  cast text,
   synopsis text not null,
-  release_date date not null
+  length int not null,
+  genre varchar[40] not null,
+  release_date date not null,
+  rating varchar[5]
+);
+
+create table PLAYS_AT (
+  playing boolean not null,
+  mtitle varchar[100] not null primary key,
+  tID int not null,
+  constraint PLAYSTITLE foreign key(mtitle) references MOVIE(title) on delete cascade on update cascade,
+  constraint PLAYSTHEATRE foreign key(tID) references THEATER(theater_id) on delete cascade on update cascade
+);
+
+create table SHOWTIME (
+  showtime time not null primary key,
+  mtitle varchar[100] not null,
+  tID int not null,
+  constraint SHOWTITLE foreign key(mtitle) references MOVIE(title) on delete cascade on update cascade,
+  constraint SHOWTHEATRE foreign key(tID) references THEATER(theater_id) on delete cascade on update cascade
 );
 
 create table THEATER (
-  name varchar[50] not null,
   theater_id integer primary key autoincrement,
+  name varchar[60] not null,
   state varchar[2] not null,
   city varchar[25] not null,
   street varchar[40] not null,
   zip int not null
 );
 
-create table PAYMENT_INFO (
-  card_number int not null primary key,
-  cvv int not null,
-  saved boolean not null,
-  name_on_card varchar[40] not null,
-  expiration_date varchar[5] not null,
-  username varchar[30] not null,
-  constraint PAYMENTUSER foreign key(username) references USER(username) on delete cascade on update cascade
+create table SYSTEM_INFO (
+  cancellation_fee int primary key,
+  manager_password varchar[30],
+  child_discount int,
+  senior_discount int
 );
 
 create table PREFERS (
-  username varchar[30] not null primary key,
   theater_id int not null,
+  username varchar[30] not null primary key,
   constraint PREFERSUSER foreign key(username) references USER(username) on delete cascade on update cascade,
   constraint PREFERSTHEATER foreign key(theater_id) references THEATER(theater_id) on delete cascade on update cascade
-);
-
-create table PLAYS_AT (
-  mtitle varchar[100] not null primary key,
-  showtime time not null,
-  playing boolean not null,
-  tID int not null,
-  constraint PLAYSTITLE foreign key(mtitle) references MOVIE(title) on delete cascade on update cascade,
-  constraint PLAYSTHEATRE foreign key(tID) references THEATER(theater_id) on delete cascade on update cascade
-);
-
-create table ORDERS (
-  theater_id int not null,
-  card_number int not null,
-  title varchar[100] not null,
-  username varchar[30] not null,
-  total_tickets int not null,
-  adult_tickets int not null,
-  child_tickets int not null,
-  senior_tickets int not null,
-  o_time time not null,
-  o_date date not null,
-  status varchar[25],
-  order_ID integer not null primary key autoincrement,
-  total_cost int not null,
-  constraint ORDERTHEATRE foreign key(theater_id) references THEATER(theater_id) on delete set null on update cascade,
-  constraint ORDERCARD foreign key(card_number) references PAYMENT_INFO(card_number) on delete set null on update cascade,
-  constraint ORDERTITLE foreign key(title) references MOVIE(title) on delete set null on update cascade,
-  constraint ORDERUSER foreign key(username) references USER(username) on delete set null on update cascade
 );
