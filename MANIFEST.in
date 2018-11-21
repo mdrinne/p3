@@ -1,0 +1,3 @@
+graft p3/templates
+graft p3/static
+include p3/schema.sql
