@@ -1,30 +1,24 @@
-from flask import Flask, render_template, session, redirect, request, g, url_for, abort, flash
 import os
-import sqlite3 as sql
+import sqlite3
 
-app = Flask(__name__)  #create application instance
-app.config.from_object(__name__)  #load config from this file
+from flask import (Flask, request, session, g, redirect, url_for, abort,
+    render_template, flash)
 
-app.config.update(dict(
-    DATABASE = os.path.join(app.root_path, 'movie.db'),
-    SECRET_KEY = 'dev'
-))
-app.config.from_envvar('MOVIE_SETTINGS', silent=True)
+app = Flask(__name__) # create the application instance :)
+app.config.from_object(__name__) # load config from this file , flaskr.py
+
+# Load default config and override config from an environment variable
+app.config.update(
+    DATABASE=os.path.join(app.root_path, 'p3.db'),
+    SECRET_KEY=b'_5#y2L"F4Q8z\n\xec]/',
+    USERNAME='admin',
+    PASSWORD='default'
+)
+app.config.from_envvar('P3_SETTINGS', silent=True)
 
 def connect_db():
-    """Connects to the database"""
+    """Connects to the specific database."""
 
-    rv = sql.connect(app.config['DATABASE'])
-    rv.row_factory = sql.Row
+    rv = sqlite3.connect(app.config['DATABASE'])
+    rv.row_factory = sqlite3.Row
     return rv
-
-@app.route('/')
-def login():
-    return render_template('login.html')
-
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    return render_template('register.html')
-
-if __name__ == '__main__':
-    app.run(debug=True)
