@@ -1,4 +1,5 @@
 MANIFEST.in
+README.md
 p3/__init__.py
 p3/p3.py
 p3/schema.sql
@@ -7,3 +8,7 @@ p3.egg-info/SOURCES.txt
 p3.egg-info/dependency_links.txt
 p3.egg-info/requires.txt
 p3.egg-info/top_level.txt
+p3/templates/login.html
+p3/templates/navbar.html
+p3/templates/register.html
+p3/templates/show_users.html

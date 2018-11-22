@@ -47,10 +47,49 @@ def close_db(error):
     if hasattr(g, 'sqlite_db'):
         g.sqlite_db.close()
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def login():
-    return render_template('login.html')
+    error = None
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        db = get_db()
+        cur = db.execute('select username, password from CUSTOMER where username=?;',[username])
+        customer = cur.fetchone()
+        cur = db.execute('select username, password from MANAGER where username=?;', [username])
+        manager = cur.fetchone()
+        if customer is None and manager is None:
+            error = 'Username does not exist'
+        elif manager is None:
+            if password == customer[1]:
+                session.clear()
+                session['logged_in'] = True
+                session['user'] = username
+                session['manager'] = False
+                return 'Hello, customer!'
+            else:
+                error = 'Incorrect Password'
+        else:
+            if password == manager[1]:
+                session.clear()
+                session['logged_in'] = True
+                session['user'] = username
+                session['manager'] = True
+                return 'Hello, manager'
+            else:
+                error = 'Incorrect Password'
+
+    flash(error)
+    return render_template('login.html', error=error)
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    return render_template('register.html')
+    error=None
+    for user in query_db('select * from CUSTOMER'):
+        print(user['email'])
+    return render_template('register.html', error=error)

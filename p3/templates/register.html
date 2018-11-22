@@ -8,28 +8,19 @@
   </div>
   <div class="container">
     <form action="{{ url_for('register') }}" method=post>
-      <div class="form-group">
-        <label for="username">Username</label>
-        <input type="username" class="form-control" id="username" placeholder="Enter Username" name=username>
-      </div>
-      <div class="form-group">
-        <label for="email">Email address</label>
-        <input type="email" class="form-control" id="email" placeholder="Enter Email" name=email>
-      </div>
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" class="form-control" id="password" placeholder="Enter Password" name=password>
-      </div>
-      <div class="form-group">
-        <label for="confirmpassword">Confirm Password</label>
-        <input type="password" class="form-control" id="confirmpassword" placeholder="Confirm Password" name=confirmpassword>
-      </div>
-      <div class="form-group">
-        <label for="managerpassword">Manager Password</label>
-        <input type="password" class="form-control" id="managerpassword" placeholder="Manager Password" name="managerpassword">
-      </div>
-      <br>
-      <button type="submit" class="btn btn-info">Register</button>
+      <dl>
+        <dt>Username
+        <dd><input type=text name=username placeholder='Enter Username (30 characters max)' size=60 maxlength=30>
+        <dt>Email
+        <dd><input type=text name=email placeholder='Enter Email (60 character max)' size=60 maxlength=60>
+        <dt>Password
+        <dd><input type=password name=password placeholder='Enter Password (30 character max)' size=60 maxlength=30>
+        <dt>Confirm Password
+        <dd><input type=password name=confirmpassword placeholder='Confirm Password' size=60 maxlength=30>
+        <dt>Manager Password
+        <dd><input type=password name=managerpassword placeholder='Manager Password' size=60 maxlength=30>
+        <dd><input type=submit value=Register>
+      </dl>
     </form>
   </div>
 {% endblock %}
