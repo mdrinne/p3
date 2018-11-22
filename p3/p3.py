@@ -89,7 +89,4 @@ def logout():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    error=None
-    for user in query_db('select * from CUSTOMER'):
-        print(user['email'])
-    return render_template('register.html', error=error)
+    return render_template('register.html')

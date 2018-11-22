@@ -1,5 +1,6 @@
 {% extends "navbar.html" %}
 {% block body %}
+<br>
   <div class="container">
     <div class="jumbotron">
       <h1 class="display-4">Welcome!</h1>
@@ -8,19 +9,28 @@
   </div>
   <div class="container">
     <form action="{{ url_for('register') }}" method=post>
-      <dl>
-        <dt>Username
-        <dd><input type=text name=username placeholder='Enter Username (30 characters max)' size=60 maxlength=30>
-        <dt>Email
-        <dd><input type=text name=email placeholder='Enter Email (60 character max)' size=60 maxlength=60>
-        <dt>Password
-        <dd><input type=password name=password placeholder='Enter Password (30 character max)' size=60 maxlength=30>
-        <dt>Confirm Password
-        <dd><input type=password name=confirmpassword placeholder='Confirm Password' size=60 maxlength=30>
-        <dt>Manager Password
-        <dd><input type=password name=managerpassword placeholder='Manager Password' size=60 maxlength=30>
-        <dd><input type=submit value=Register>
-      </dl>
+      <div class="form-group">
+        <label for="loginUsername">Username</label>
+        <input type="username" class="form-control" id="regUsername" placeholder="Enter Username (30 character max)" name=username maxlength=30>
+      </div>
+      <div class="form-group">
+        <label for="loginUsername">Email</label>
+        <input type="email" class="form-control" id="regEmail" placeholder="Enter Email (60 character max)" name=email maxlength=60>
+      </div>
+      <div class="form-group">
+        <label for="loginUsername">Password</label>
+        <input type="password" class="form-control" id="regPassword" placeholder="Enter Password (30 character max)" name=password maxlength=30>
+      </div>
+      <div class="form-group">
+        <label for="loginUsername">Confirm Password</label>
+        <input type="password" class="form-control" id="regConfirmPass" placeholder="Confirm Password" name=confirmPass maxlength=30>
+      </div>
+      <div class="form-group">
+        <label for="loginUsername">Manager Password</label>
+        <input type="password" class="form-control" id="regManagerPass" placeholder="Enter Manager Password" name=managerPass maxlength=30>
+      </div>
+      <button type="submit" class="btn btn-outline-primary">Register</button>
     </form>
   </div>
+  <br><br>
 {% endblock %}
