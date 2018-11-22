@@ -89,4 +89,61 @@ def logout():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    return render_template('register.html')
+    error = None
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+        confirmPass = request.form['confirmPass']
+        managerPass = request.form['managerPass']
+        db = get_db()
+        cur = db.execute('select * from CUSTOMER where username=?;',[username])
+        customer_username = cur.fetchone()
+        cur = db.execute('select * from CUSTOMER where email=?;',[email])
+        customer_email = cur.fetchone()
+        cur = db.execute('select * from MANAGER where username=?;',[username])
+        manager_username = cur.fetchone()
+        cur = db.execute('select * from MANAGER where email=?;',[email])
+        manager_email = cur.fetchone()
+        if not username:
+            error = 'Must fill out all required fields'
+        elif not email:
+            error = 'Must fill out all required fields'
+        elif not password:
+            error = 'Must fill out all required fields'
+        elif not confirmPass:
+            error = 'Must fill out all required fields'
+        elif customer_username is not None:
+            if username == customer_username[0]:
+                error = 'Username is already taken'
+        elif manager_username is not None:
+            if username == manager_username[0]:
+                error = 'Username is already taken'
+        elif customer_email is not None:
+            if email == customer_email[1]:
+                error = 'Email is already taken'
+        elif manager_email is not None:
+            if email == manager_email[1]:
+                error = 'Email is already taken'
+        elif confirmPass != password:
+            error = 'Passwords did not match'
+        else:
+            if not managerPass:
+                db.execute('insert into CUSTOMER (username, email, password) values (?,?,?);',
+                    [username,email,password])
+                db.commit()
+                flash('customer successfully added')
+                return redirect(url_for('login'))
+            else:
+                cur = db.execute('select * from SYSTEM_INFO where manager_password is not null;')
+                manager_password = cur.fetchone()
+
+                if managerPass == manager_password[1]:
+                    db.execute('insert into MANAGER (username, email, password) values (?,?,?);',
+                        [username,email,password])
+                    db.commit()
+                    flash('manager successfully added')
+                    return redirect(url_for('login'))
+                else:
+                    error = 'Manager password incorrect'
+    return render_template('register.html', error=error)

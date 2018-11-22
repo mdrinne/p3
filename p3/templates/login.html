@@ -15,6 +15,9 @@
       <label for="loginPassword">Password</label>
       <input type="password" class="form-control" id="loginPassword" placeholder="Enter Password" name=password>
     </div>
+    {% if error %}
+    <h8 class=redtext>{{ error }}</h8><br>
+    {% endif %}
     <button type="submit" class="btn btn-primary">Submit</button>
     <a type="register" class="btn btn-outline-primary" href="{{ url_for('register') }}">Register</a>
   </form>
