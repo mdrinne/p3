@@ -13,13 +13,13 @@
   </style>
 </head>
 <body>
-  <nav class="navbar navbar-expand-sm navbar-dark fixed-top justify-content-between" style="background-color: #04C3D3">
-    <a class="navbar-brand">Movie DB</a>
+  <nav class="navbar navbar-expand-sm navbar-dark sticky-top justify-content-between" style="background-color: #291784">
+    <a class="navbar-brand" style='color: #ACACAE'>Movie DB</a>
     {% if session.logged_in %}
     <a class="btn btn-secondary" href="{{ url_for('logout') }}">Log Out</a>
     {% endif %}
   </nav>
   <!--add to body-->
-  <div><br><br><br></div>
+  <div><br><br></div>
   {% block body %}{% endblock %}
 </body>

@@ -66,7 +66,7 @@ def login():
                 session['logged_in'] = True
                 session['user'] = username
                 session['manager'] = False
-                return 'Hello, customer!'
+                return redirect(url_for('now_playing'))
             else:
                 error = 'Incorrect Password'
         else:
@@ -147,3 +147,14 @@ def register():
                 else:
                     error = 'Manager password incorrect'
     return render_template('register.html', error=error)
+
+@app.route('/now_playing', methods=['GET','POST'])
+def now_playing():
+    db = get_db()
+    cur = db.execute('select mtitle from PLAYS_AT where playing=1 group by mtitle;')
+    titles = cur.fetchall()
+    return render_template('now_playing.html', titles=titles)
+
+@app.route('/me')
+def me():
+    return session.get('user')

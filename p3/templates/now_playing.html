@@ -1,0 +1,9 @@
+{% extends "navbar.html" %}
+{% block body %}
+<div class="container">
+    <h1 class="text-center">Now Playing</h1>
+</div>
+<div style="padding-left: 20px">
+  <a href="{{ url_for('me') }}" class="btn btn-secondary" role="button" aria-pressed="true">Me</a>
+</div>
+{% endblock %}
