@@ -61,12 +61,19 @@ create table ORDERS (
 
 create table MOVIE (
   title varchar[100] not null primary key,
-  cast text,
   synopsis text not null,
   length int not null,
   genre varchar[40] not null,
   release_date date not null,
   rating varchar[5]
+);
+
+create table CAST (
+  ID integer not null primary key autoincrement,
+  mtitle varchar[100] not null,
+  actor varchar[200] not null,
+  role varchar[200] not null,
+  constraint CASTMOVIE foreign key(mtitle) references MOVIE(title) on delete cascade on update cascade
 );
 
 create table PLAYS_AT (
