@@ -70,15 +70,17 @@ create table MOVIE (
 );
 
 create table PLAYS_AT (
-  playing boolean not null,
-  mtitle varchar[100] not null primary key,
+  ID integer not null primary key autoincrement,
+  playing BIT not null,
+  mtitle varchar[100] not null,
   tID int not null,
   constraint PLAYSTITLE foreign key(mtitle) references MOVIE(title) on delete cascade on update cascade,
   constraint PLAYSTHEATRE foreign key(tID) references THEATER(theater_id) on delete cascade on update cascade
 );
 
 create table SHOWTIME (
-  showtime time not null primary key,
+  ID integer not null primary key autoincrement,
+  showtime time not null,
   mtitle varchar[100] not null,
   tID int not null,
   constraint SHOWTITLE foreign key(mtitle) references MOVIE(title) on delete cascade on update cascade,
