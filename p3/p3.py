@@ -151,10 +151,22 @@ def register():
 @app.route('/now_playing', methods=['GET','POST'])
 def now_playing():
     db = get_db()
-    cur = db.execute('select mtitle from PLAYS_AT where playing=1 group by mtitle;')
-    titles = cur.fetchall()
-    return render_template('now_playing.html', titles=titles)
+    cur = db.execute('select * from PLAYS_AT where playing=1 group by mtitle;')
+    movies = cur.fetchall()
+    return render_template('now_playing.html', movies=movies)
 
 @app.route('/me')
 def me():
-    return session.get('user')
+    return render_template('me.html')
+
+@app.route('/order_history', methods=['GET', 'POST'])
+def order_history():
+    return 'order history'
+
+@app.route('/payment_info', methods=['GET', 'POST'])
+def payment_info():
+    return 'payment info'
+
+@app.route('/preferred_theater', methods=['GET', 'POST'])
+def preferred_theater():
+    return 'preferred theater'

@@ -1,0 +1,14 @@
+{% extends "navbar.html" %}
+{% block body %}
+<div class="container">
+  <h1 class="text-center">Me</h1>
+  <br>
+  <a href="{{ url_for('order_history') }}" class="text-center" style="color: #291784;">My Order History</a>
+  <br>
+  <br>
+  <a href="{{ url_for('payment_info') }}" style="color: #291784;">My Payment History</a>
+  <br>
+  <br>
+  <a href="{{ url_for('preferred_theater') }}" style="color: #291784;">My Preferred Theater</a>
+</div>
+{% endblock %}
