@@ -36,7 +36,7 @@ create table PAYMENT_INFO (
   card_no int not null primary key,
   cvv int not null,
   name_on_card varchar[50] not null,
-  expiration_date varchar[5] not null,
+  expiration_date varchar[7] not null,
   saved boolean not null,
   username varchar[30] not null,
   constraint PAYMENTUSER foreign key(username) references CUSTOMER(username) on delete cascade on update cascade
