@@ -2,12 +2,13 @@
 {% block body %}
 <div class="container">
   <div class="jumbotron">
-    <h1 class="display-4">My Preferred Theater<h1>
+    <h1 class="display-4">My Preferred Theaters</h1>
+    <h4>{{ session.get('user') }}</h4>
   </div>
   {% if not theaters %}
   <h2>You currently do not have any preferred theaters</h2>
   {% else %}
-  <form action="{{ url_for('preferred_theater') }}">
+  <form action="{{ url_for('preferred_theater') }}" method=post>
     {% for theater in theaters %}
     <div class="form-check">
       <label class="form-check-label">

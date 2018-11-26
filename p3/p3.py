@@ -185,13 +185,10 @@ def preferred_theater():
     cur = db.execute('select * from PREFERS natural join THEATER where username=?;',[session.get('user')])
     theaters = cur.fetchall()
     if request.method == 'POST':
-        print('deleting {}'.format(delete))
         delete = request.form['delete']
-        db.execute('delete from PREFERS where theater_id=? and username=?',
+        db.execute('delete from PREFERS where theater_id=(?) and username=(?)',
             [delete,session.get('user')])
         db.commit()
-        cur = db.execute('select * from PREFERS natural join THEATER where username=?;',[session.get('user')])
-        theaters = cur.fetchall()
         return redirect(url_for('preferred_theater', theaters=theaters))
     return render_template('preferred_theater.html', theaters=theaters)
 
