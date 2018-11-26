@@ -212,9 +212,13 @@ def give_review(title):
         rating = request.form['rating']
         rtitle = request.form['rtitle']
         comment = request.form['comment']
+        db = get_db()
+        cur = db.execute('select * from ORDERS where title=? and status=completed', [title])
+        check = cur.fetchone()
         if rtitle is None or rtitle == '':
             error = 'Must give review a title'
-            print(error)
+        elif not check:
+            error = 'Must have seen movie to give a review'
         else:
             db = get_db()
             db.execute('insert into REVIEW (title,mtitle,comment,rating,username) values (?,?,?,?,?)',
