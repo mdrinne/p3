@@ -194,8 +194,17 @@ def overview(title):
 
 @app.route('/movie/<title>/review')
 def review(title):
-    return 'movie review'
+    db = get_db()
+    cur = db.execute('select * from REVIEW where mtitle=?',[title])
+    reviews = cur.fetchall()
+    cur = db.execute('select avg(rating) as avg from REVIEW where mtitle=?;',[title])
+    rating = cur.fetchone()
+    return render_template('review.html', reviews=reviews, avg=rating, title=title)
 
 @app.route('/movie/<title>/buy_ticket')
 def buy_ticket(title):
     return 'buy ticket'
+
+@app.route('/movie/<title>/review/give_review')
+def give_review(title):
+    return 'give review'

@@ -1,0 +1,25 @@
+{% extends "navbar.html" %}
+{% block body %}
+<div class="container">
+  <div class="jumbotron">
+    <h1 class="display-4">{{ title }}</h1>
+    <h4>Avg. Rating: {{ avg.avg }}</h4>
+    <br>
+    <a href="{{ url_for('give_review', title=title) }}" class="btn" role="button" aria-pressed="true"
+      style="background-color: #291784; color: #FFFFFF;">Give Review</a>
+    <hr class="my-4">
+    <ul class="list-group">
+      {% for review in reviews %}
+      <span class="border">
+        <li class="list-group-item">Title: {{ review.title }}<br>Rating: {{ review.rating }}<br>Comment: {{ review.comment }}</li>
+      </span>
+      <br>
+      {% endfor %}
+    </ul>
+    <br><br>
+    <a href="{{ url_for('movie', title=title) }}" class="btn" role="button" aria-pressed="true"
+      style="background-color: #291784; color: #FFFFFF;">Back</a>
+  </div>
+
+</div>
+{% endblock %}
