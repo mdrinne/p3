@@ -56,7 +56,7 @@ create table ORDERS (
   title varchar[100] not null,
   theater_id int not null,
   constraint ORDERCARD foreign key(card_number) references PAYMENT_INFO(card_number) on delete set null on update cascade,
-  constraint ORDERUSER foreign key(username) references USER(username) on delete set null on update cascade,
+  constraint ORDERUSER foreign key(username) references CUSTOMER(username) on delete set null on update cascade,
   constraint ORDERTITLE foreign key(title) references MOVIE(title) on delete set null on update cascade,
   constraint ORDERTHEATER foreign key(theater_id) references THEATER(theater_id) on delete set null on update cascade
 );
