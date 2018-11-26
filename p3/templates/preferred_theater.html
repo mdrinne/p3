@@ -1,0 +1,29 @@
+{% extends "navbar.html" %}
+{% block body %}
+<div class="container">
+  <div class="jumbotron">
+    <h1 class="display-4">My Preferred Theater<h1>
+  </div>
+  {% if not theaters %}
+  <h2>You currently do not have any preferred theaters</h2>
+  {% else %}
+  <form action="{{ url_for('preferred_theater') }}">
+    {% for theater in theaters %}
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="radio" class="form-check-input" name="delete" id="{{ theater.theater_id }}" value="{{ theater.theater_id }}">
+        {{ theater.name }}<br>
+        {{ theater.street }}, {{ theater.city }}, {{ theater.state }} {{ theater.zip }}
+      </label>
+    </div>
+    {% endfor %}
+  </form>
+  {% endif %}
+  <br>
+  {% if theaters %}
+  <button type="submit" class="btn btn-primary">Delete</button>
+  {% endif %}
+  <a href="{{ url_for('me') }}" class="btn" role="button" aria-pressed="true"
+    style="background-color: #291784; color: #FFFFFF;">Back</a>
+</div>
+{% endblock %}
