@@ -177,7 +177,15 @@ def order_history():
 
 @app.route('/payment_info', methods=['GET', 'POST'])
 def payment_info():
-    return 'payment info'
+    db = get_db()
+    cur = db.execute('select *  from PAYMENT_INFO where username=? and saved=1;',[session.get('user')])
+    cards = cur.fetchall()
+    if request.method == 'POST':
+        delete = request.form['delete']
+        db.execute('delete from PAYMENT_INFO where card_no=?;',[delete])
+        db.commit()
+        return redirect(url_for('payment_info', cards=cards))
+    return render_template('payment_info.html', cards=cards)
 
 @app.route('/preferred_theater', methods=['GET', 'POST'])
 def preferred_theater():

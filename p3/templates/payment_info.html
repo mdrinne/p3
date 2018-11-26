@@ -1,0 +1,46 @@
+{% extends "navbar.html" %}
+{% block body %}
+<div class="container">
+  <div class="jumbotron">
+    <h1 class="display-4">My Payment Information</h1>
+    <h4>{{ session.get('user') }}</h4>
+    <hr class="my-4">
+  </div>
+  {% if not cards %}
+  <h2>You currently do not have any saved forms of payment</h2>
+  {% else %}
+  <form action="{{ url_for('payment_info') }}" method=post>
+    <table class="table table-hover table-bordered">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">Select</th>
+          <th scope="col">Card Number</th>
+          <th scope="col">Name on Card</th>
+          <th scope="col">Exp Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for card in cards %}
+        <tr>
+          <th scope="row">
+            <label class="form-check-label">
+              <input type="radio" class="form-check-input" name="delete" id="{{ card.card_no }}" value="{{ card.card_no }}">
+            </label>
+          </th>
+          <td>{{ card.card_no }}</td>
+          <td>{{ card.name_on_card }}</td>
+          <td>{{ card.expiration_date }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <br>
+    {% if cards %}
+    <button type="submit" class="btn btn-primary">Delete</button>
+    {% endif %}
+    <a href="{{ url_for('me') }}" class="btn" role="button" aria-pressed="true"
+      style="background-color: #291784; color: #FFFFFF;">Back</a>
+  </form>
+  {% endif %}
+</div>
+{% endblock %}
