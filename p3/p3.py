@@ -218,9 +218,25 @@ def review(title):
     rating = cur.fetchone()
     return render_template('review.html', reviews=reviews, avg=rating, title=title)
 
-@app.route('/movie/<title>/buy_ticket')
-def buy_ticket(title):
-    return 'buy ticket'
+@app.route('/movie/<title>/buy_ticket/choose_theater', methods=['GET','POST'])
+def choose_theater(title):
+    db = get_db()
+    cur = db.execute('select name from SHOWTIME join PREFERS on tid=theater_id natural join Theater where username=?;',[session.get('user')])
+    prefers = cur.fetchall()
+    return render_template('choose_theater.html', prefers=prefers, title=title)
+
+@app.route('/movie/<title>/buy_ticket/pick_time', methods=['GET','POST'])
+def pick_time(title):
+    theater = request.form['theater']
+    return redirect(url_for('select_time', title=title, theater=theater))
+
+@app.route('/movie/<title>/buy_ticket/search_theaters', methods=['GET','POST'])
+def search_theaters(title):
+    return 'search theaters'
+
+@app.route('/movie/<title>/buy_ticket/select_time/<theater>')
+def select_time(title,theater):
+    return 'select time for {} at {}'.format(title,theater)
 
 @app.route('/movie/<title>/review/give_review', methods=['GET','POST'])
 def give_review(title):

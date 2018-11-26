@@ -23,9 +23,8 @@
         {% for card in cards %}
         <tr>
           <th scope="row">
-            <label class="form-check-label">
-              <input type="radio" class="form-check-input" name="delete" id="{{ card.card_no }}" value="{{ card.card_no }}">
-            </label>
+            <label class="form-check-label"></label>
+            <input type="radio" class="form-check-input" name="delete" id="{{ card.card_no }}" value="{{ card.card_no }}">
           </th>
           <td>{{ card.card_no }}</td>
           <td>{{ card.name_on_card }}</td>

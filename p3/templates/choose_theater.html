@@ -1,0 +1,24 @@
+{% extends "navbar.html" %}
+{% block body %}
+<div class="container">
+  <div class="jumbotron">
+    <h1 class="display-4">Choose Theater</h1>
+    <hr class="my-4">
+  </div>
+  <form action="{{ url_for('pick_time', title=title) }}" method=post>
+    <div class="form-group row">
+      <label for="theater" class="col-sm-2 col-form-label">Saved Theater</label>
+      <div class="col-sm-4">
+        <select class="form-control" id="theater" name="theater">
+          {% for theater in prefers %}
+          <option>{{ theater.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-sm-2">
+        <button type="submit" class="btn" style="background-color: #291784; color: #FFFFFF;">Choose</button>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}
