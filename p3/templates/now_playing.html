@@ -9,7 +9,7 @@
 <br>
 <div class="list-group">
   {% for movie in movies %}
-  <a href="#" class="list-group-item-action text-center">{{ movie.mtitle }}</a>
+  <a href="{{ url_for('movie', movie=movie.mtitle) }}" class="list-group-item-action text-center">{{ movie.mtitle }}</a>
   {% endfor %}
 </div>
 {% endblock %}

@@ -155,6 +155,10 @@ def now_playing():
     movies = cur.fetchall()
     return render_template('now_playing.html', movies=movies)
 
+@app.route('/movie/<movie>', methods=['GET','POST'])
+def movie(movie):
+    return movie
+
 @app.route('/me')
 def me():
     return render_template('me.html')
