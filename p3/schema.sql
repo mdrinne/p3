@@ -113,8 +113,9 @@ create table SYSTEM_INFO (
 );
 
 create table PREFERS (
+  ID integer not null primary key autoincrement,
   theater_id int not null,
-  username varchar[30] not null primary key,
+  username varchar[30] not null,
   constraint PREFERSUSER foreign key(username) references CUSTOMER(username) on delete cascade on update cascade,
   constraint PREFERSTHEATER foreign key(theater_id) references THEATER(theater_id) on delete cascade on update cascade
 );
