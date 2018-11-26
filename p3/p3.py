@@ -155,9 +155,17 @@ def now_playing():
     movies = cur.fetchall()
     return render_template('now_playing.html', movies=movies)
 
-@app.route('/movie/<movie>', methods=['GET','POST'])
-def movie(movie):
-    return movie
+@app.route('/movie/<title>', methods=['GET','POST'])
+def movie(title):
+    db = get_db()
+    cur = db.execute('select * from MOVIE where title=?;',[title])
+    movie = cur.fetchone()
+    cur = db.execute('select avg(rating) as avg from REVIEW where mtitle=?;',[title])
+    rating = cur.fetchone()
+    cur = db.execute('select count(mtitle) as count from REVIEW where mtitle=?',[title])
+    count = cur.fetchone()
+    avg = {'rating':rating[0], 'count':count[0]}
+    return render_template('movie.html', movie=movie, avg=avg)
 
 @app.route('/me')
 def me():
@@ -174,3 +182,15 @@ def payment_info():
 @app.route('/preferred_theater', methods=['GET', 'POST'])
 def preferred_theater():
     return 'preferred theater'
+
+@app.route('/movie/<title>/overview', methods=['GET','POST'])
+def overview(title):
+    return title
+
+@app.route('/movie/review')
+def review(movie):
+    return 'movie review'
+
+@app.route('/movie/buy_ticket')
+def buy_ticket(movie):
+    return 'buy ticket'

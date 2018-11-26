@@ -25,9 +25,11 @@ create table CUSTOMER (
 create table REVIEW (
   review_ID integer primary key autoincrement,
   title varchar[60] not null,
+  mtitle varchar[100] not null,
   comment text,
   rating int,
-  username varchar[30] not null
+  username varchar[30] not null,
+  constraint REVIEWMOVIE foreign key(mtitle) references MOVIE(title) on delete cascade on update cascade
 );
 
 create table PAYMENT_INFO (

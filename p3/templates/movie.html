@@ -1,0 +1,24 @@
+{% extends "navbar.html" %}
+{% block body %}
+<div class="container">
+  <div class="jumbotron">
+    <h1 class="display-4">{{ movie.title }}</h1>
+    <hr class="my-4"
+      <h6>Released: {{ movie.release_date }}</h6>
+      <h6>{{ movie.rating }}, {{ movie.length }} minutes</h6>
+      <h6>{{ movie.genre }}</h6>
+      {% if avg.count == 0 %}
+      <br>
+      <h6>No reviews yet!</h6>
+      {% else %}
+      <h6>{{ avg.rating }}/5.0 stars</h6>
+      <h6>{{ avg.count }} Fan Reviews</h6>
+      {% endif %}
+      <br><br>
+      <a href="{{ url_for('overview', title=movie.title) }}" class="btn" role="button" aria-pressed="true"
+        style="background-color: #291784; color: #FFFFFF;">Overview</a>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
