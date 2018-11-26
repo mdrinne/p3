@@ -1,0 +1,38 @@
+{% extends "navbar.html" %}
+{% block body %}
+<div class="container">
+  <div class="jumbotron">
+    <h1 class="display-4">{{ title }}</h1>
+    <hr class="my-4">
+    <h6>Leave a review for {{ title }}</h6>
+  </div>
+  <form action="{{ url_for('give_review', title=title) }}" method=post>
+    <div class="form-group">
+      <label for="rating">Rating</label>
+      <select class="form-control" id="rating" name="rating">
+        <option>0</option>
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+        <option>5</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="rtitle">*Title</label>
+      <input type="title" class="form-control" id="rtitle" placeholder="(60 characters max)" name="rtitle" maxlength=60>
+    </div>
+    <div class="form-group">
+      <label for="comment">Comment</label>
+      <textarea class="form-control" id="comment" name="comment" rows=3></textarea>
+    </div>
+    <h8>(Field with * is required)</h8><br>
+    {% if error %}
+    <h8 class=redtext>{{ error }}</h8><br>
+    {% endif %}
+    <button type="submit" class="btn btn-primary">Submit</button>
+    <a href="{{ url_for('review', title=title) }}" class="btn" role="button" aria-pressed="true"
+      style="background-color: #291784; color: #FFFFFF;">Back</a>
+  </form>
+</div>
+{% endblock %}

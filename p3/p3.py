@@ -205,6 +205,20 @@ def review(title):
 def buy_ticket(title):
     return 'buy ticket'
 
-@app.route('/movie/<title>/review/give_review')
+@app.route('/movie/<title>/review/give_review', methods=['GET','POST'])
 def give_review(title):
-    return 'give review'
+    error = None
+    if request.method == 'POST':
+        rating = request.form['rating']
+        rtitle = request.form['rtitle']
+        comment = request.form['comment']
+        if rtitle is None or rtitle == '':
+            error = 'Must give review a title'
+            print(error)
+        else:
+            db = get_db()
+            db.execute('insert into REVIEW (title,mtitle,comment,rating,username) values (?,?,?,?,?)',
+                [rtitle,title,comment,rating,session.get('user')])
+            db.commit()
+            return redirect(url_for('review', title=title))
+    return render_template('give_review.html', title=title, error=error)
