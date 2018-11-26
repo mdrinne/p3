@@ -8,7 +8,15 @@ p3.egg-info/SOURCES.txt
 p3.egg-info/dependency_links.txt
 p3.egg-info/requires.txt
 p3.egg-info/top_level.txt
+p3/static/style.css
+p3/templates/.DS_Store
+p3/templates/give_review.html
 p3/templates/login.html
+p3/templates/me.html
+p3/templates/movie.html
 p3/templates/navbar.html
+p3/templates/now_playing.html
+p3/templates/overview.html
+p3/templates/preferred_theater.html
 p3/templates/register.html
-p3/templates/show_users.html
+p3/templates/review.html
