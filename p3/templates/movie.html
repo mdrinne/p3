@@ -17,7 +17,10 @@
       <br><br>
       <a href="{{ url_for('overview', title=movie.title) }}" class="btn" role="button" aria-pressed="true"
         style="background-color: #291784; color: #FFFFFF;">Overview</a>
-
+      <a href="{{ url_for('review', title=movie.title) }}" class="btn" role="button" aria-pressed="true"
+        style="background-color: #291784; color: #FFFFFF;">Movie Review</a>
+        <a href="{{ url_for('buy_ticket', title=movie.title) }}" class="btn" role="button" aria-pressed="true"
+          style="background-color: #291784; color: #FFFFFF;">Buy Ticket</a>
     </div>
   </div>
 </div>

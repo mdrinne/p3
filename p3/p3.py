@@ -187,10 +187,10 @@ def preferred_theater():
 def overview(title):
     return title
 
-@app.route('/movie/review')
-def review(movie):
+@app.route('/movie/<title>/review')
+def review(title):
     return 'movie review'
 
-@app.route('/movie/buy_ticket')
-def buy_ticket(movie):
+@app.route('/movie/<title>/buy_ticket')
+def buy_ticket(title):
     return 'buy ticket'
