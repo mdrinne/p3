@@ -185,7 +185,12 @@ def preferred_theater():
 
 @app.route('/movie/<title>/overview', methods=['GET','POST'])
 def overview(title):
-    return title
+    db = get_db()
+    cur = db.execute('select * from MOVIE where title=?;',[title])
+    movie = cur.fetchone()
+    cur = db.execute('select * from CAST where mtitle=?',[title])
+    cast = cur.fetchall()
+    return render_template('overview.html', movie=movie, cast=cast)
 
 @app.route('/movie/<title>/review')
 def review(title):

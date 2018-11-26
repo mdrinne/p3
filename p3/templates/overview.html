@@ -1,0 +1,34 @@
+{% extends "navbar.html" %}
+{% block body %}
+<div class="container">
+  <div class="jumbotron">
+    <h1 class="display-4">{{ movie.title }}</h1>
+    <hr class="my-4">
+    <h5 class="font-italic">Synopsis</h5>
+    <br>
+    <h5>{{ movie.synopsis }}</h5>
+    <br><br>
+    <h5 class="font-italic">Cast</h5>
+    <br>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Actor</th>
+          <th scope="col">Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for actor in cast %}
+        <tr>
+          <td>{{ actor.actor }}</td>
+          <td>{{ actor.role }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <br>
+    <a href="{{ url_for('movie', title=movie.title) }}" class="btn" role="button" aria-pressed="true"
+      style="background-color: #291784; color: #FFFFFF;">Back</a>
+  </div>
+</div>
+{% endblock %}
