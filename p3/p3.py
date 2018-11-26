@@ -190,6 +190,8 @@ def preferred_theater():
         db.execute('delete from PREFERS where theater_id=? and username=?',
             [delete,session.get('user')])
         db.commit()
+        cur = db.execute('select * from PREFERS natural join THEATER where username=?;',[session.get('user')])
+        theaters = cur.fetchall()
         return redirect(url_for('preferred_theater', theaters=theaters))
     return render_template('preferred_theater.html', theaters=theaters)
 
@@ -223,7 +225,7 @@ def give_review(title):
         rtitle = request.form['rtitle']
         comment = request.form['comment']
         db = get_db()
-        cur = db.execute('select * from ORDERS where title=? and status=completed', [title])
+        cur = db.execute('select * from ORDERS where title=? and status="completed"', [title])
         check = cur.fetchone()
         if rtitle is None or rtitle == '':
             error = 'Must give review a title'
