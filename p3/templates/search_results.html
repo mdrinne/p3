@@ -1,0 +1,83 @@
+{% extends "navbar.html" %}
+{% block body %}
+<div class="container">
+  <div class="jumbotron">
+    <h1 class="display-4">Results</h1>
+    <h4>{{ title }}</h4>
+    <hr class="my-4">
+  </div>
+  {% if names %}
+  <form action="{{ url_for('pick_time', title=title) }}" method=post>
+    {% for name in names %}
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="radio" class="form-check-input" name="theater" id="{{ name.name }}" value="{{ name.name }}">
+        {{ name.name }}<br>
+        {{ name.street }}, {{ name.city }}, {{ name.state }} {{ name.zip }}
+      </label>
+    </div>
+    <hr>
+    {% endfor %}
+    <br>
+    <button type="submit" class="btn btn-primary">Next</button>
+    <a href="{{ url_for('choose_theater', title=title) }}" class="btn" role="button" aria-pressed="true"
+      style="background-color: #291784; color: #FFFFFF;">Back</a>
+  </form>
+  {% elif cities %}
+  <form action="{{ url_for('pick_time', title=title) }}" method=post>
+    {% for city in cities %}
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="radio" class="form-check-input" name="theater" id="{{ city.name }}" value="{{ city.name }}">
+        {{ city.name }}<br>
+        {{ city.street }}, {{ city.city }}, {{ city.state }} {{ city.zip }}
+      </label>
+    </div>
+    <hr>
+    {% endfor %}
+    <br>
+    <button type="submit" class="btn btn-primary">Next</button>
+    <a href="{{ url_for('choose_theater', title=title) }}" class="btn" role="button" aria-pressed="true"
+      style="background-color: #291784; color: #FFFFFF;">Back</a>
+  </form>
+  {% elif states %}
+  <form action="{{ url_for('pick_time', title=title) }}" method=post>
+    {% for state in states %}
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="radio" class="form-check-input" name="theater" id="{{ state.name }}" value="{{ state.name }}">
+        {{ state.name }}<br>
+        {{ state.street }}, {{ state.city }}, {{ state.state }} {{ state.zip }}
+      </label>
+    </div>
+    <hr>
+    {% endfor %}
+    <br>
+    <button type="submit" class="btn btn-primary">Next</button>
+    <a href="{{ url_for('choose_theater', title=title) }}" class="btn" role="button" aria-pressed="true"
+      style="background-color: #291784; color: #FFFFFF;">Back</a>
+  </form>
+  {% elif all %}
+  <form action="{{ url_for('pick_time', title=title) }}" method=post>
+    {% for place in all %}
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="radio" class="form-check-input" name="theater" id="{{ place.name }}" value="{{ place.name }}">
+        {{ place.name }}<br>
+        {{ place.street }}, {{ place.city }}, {{ place.state }} {{ place.zip }}
+      </label>
+    </div>
+    <hr>
+    {% endfor %}
+    <br>
+    <button type="submit" class="btn btn-primary">Next</button>
+    <a href="{{ url_for('choose_theater', title=title) }}" class="btn" role="button" aria-pressed="true"
+      style="background-color: #291784; color: #FFFFFF;">Back</a>
+  </form>
+  {% else %}
+  <h2>Search resulted in no theaters!</h2>
+  <a href="{{ url_for('choose_theater', title=title) }}" class="btn" role="button" aria-pressed="true"
+    style="background-color: #291784; color: #FFFFFF;">Back</a>
+  {% endif %}
+</div>
+{% endblock %}

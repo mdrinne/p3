@@ -1,8 +1,10 @@
 {% extends "navbar.html" %}
 {% block body %}
 <div class="container">
-  <h1 class="text-center">Me</h1>
-  <br>
+  <div class="jumbotron">
+    <h1 class="display-4">Me</h1>
+    <hr class="my-4">
+  </div>
   <a href="{{ url_for('order_history') }}" class="font-weight-bold" style="color: #291784;">My Order History</a>
   <br>
   <br>

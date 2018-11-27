@@ -20,7 +20,7 @@
       </div>
     </div>
   </form>
-  <form action="{{ url_for('search_theaters', title=title)}}">
+  <form action="{{ url_for('search_theaters', title=title) }}" method=post>
     <div class="form-group row">
       <label for="search" class="col-sm-2 col-form-label">City/State/Theater</label>
       <div class="col-sm-5">

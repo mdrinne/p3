@@ -221,7 +221,7 @@ def review(title):
 @app.route('/movie/<title>/buy_ticket/choose_theater', methods=['GET','POST'])
 def choose_theater(title):
     db = get_db()
-    cur = db.execute('select name from SHOWTIME join PREFERS on tid=theater_id natural join Theater where username=?;',[session.get('user')])
+    cur = db.execute('select name from PLAYS_AT as pl join PREFERS as pr on pl.tID=pr.theater_id natural join THEATER where username=? and mtitle=?;',[session.get('user'),title])
     prefers = cur.fetchall()
     return render_template('choose_theater.html', prefers=prefers, title=title)
 
@@ -234,13 +234,19 @@ def pick_time(title):
 def search_theaters(title):
     search = request.form['search']
     db = get_db()
-    cur = db.execute('select * from SHOWTIME join THEATER on tid=theater_id where name=?;'[search])
-    name = fetchall()
-    cur = db.execute('select * from SHOWTIME join THEATER on tid=theater_id where city=?;'[search])
-    city = fetchall()
-    cur = db.execute('select * from SHOWTIME join THEATER on tid=theater_id where state=?;'[search])
-    state = cur.fetchall()
-    return 'search theaters'
+    if not search:
+        cur = db.execute('select * from PLAYS_AT as p join THEATER as t on p.tID=t.theater_id where mtitle=?;',[title])
+        all = cur.fetchall()
+        return render_template('search_results.html', title=title, names=None, cities=None, states=None, all=all)
+    else:
+        cur = db.execute('select * from PLAYS_AT as p join THEATER as t on p.tID=t.theater_id where name=? and mtitle=?;',[search,title])
+        names = cur.fetchall()
+        cur = db.execute('select * from PLAYS_AT as p join THEATER as t on p.tID=t.theater_id where city=? and mtitle=?;',[search,title])
+        cities = cur.fetchall()
+        cur = db.execute('select * from PLAYS_AT as p join THEATER as t on p.tID=t.theater_id where state=? and mtitle=?;',[search,title])
+        states = cur.fetchall()
+        all = []
+        return render_template('search_results.html', title=title, names=names, cities=cities, states=states, all=None)
 
 @app.route('/movie/<title>/buy_ticket/select_time/<theater>')
 def select_time(title,theater):
