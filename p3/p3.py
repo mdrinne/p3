@@ -248,6 +248,23 @@ def search_theaters(title):
         all = []
         return render_template('search_results.html', title=title, names=names, cities=cities, states=states, all=None)
 
+@app.route('/movie/<title>/buy_ticket/check_save', methods=['GET','POST'])
+def check_save(title):
+    theater = request.form['search']
+    check = request.form.getlist('save')
+    save = bool(check)
+    if save:
+        return 'no save'
+    else:
+        return 'save'
+    # if save:
+    #     db = get_db()
+    #     cur = db.execute('select theater_id from THEATER where name=?',[theater])
+    #     id = cur.fetchone()
+    #     db.execute('insert into PREFERS (theater_id,username) values (?,?);',[id['theater_id'],session.get('user')])
+    #     db.commit()
+    return redirect(url_for('select_time', title=title, theater=theater))
+
 @app.route('/movie/<title>/buy_ticket/select_time/<theater>')
 def select_time(title,theater):
     return 'select time for {} at {}'.format(title,theater)
