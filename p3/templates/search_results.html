@@ -20,8 +20,6 @@
     {% endfor %}
     <br>
     <button type="submit" class="btn btn-primary">Next</button>
-    <a href="{{ url_for('choose_theater', title=title) }}" class="btn" role="button" aria-pressed="true"
-      style="background-color: #291784; color: #FFFFFF;">Back</a>
   </form>
   {% elif cities %}
   <form action="{{ url_for('pick_time', title=title) }}" method=post>
@@ -37,8 +35,6 @@
     {% endfor %}
     <br>
     <button type="submit" class="btn btn-primary">Next</button>
-    <a href="{{ url_for('choose_theater', title=title) }}" class="btn" role="button" aria-pressed="true"
-      style="background-color: #291784; color: #FFFFFF;">Back</a>
   </form>
   {% elif states %}
   <form action="{{ url_for('pick_time', title=title) }}" method=post>
@@ -54,8 +50,6 @@
     {% endfor %}
     <br>
     <button type="submit" class="btn btn-primary">Next</button>
-    <a href="{{ url_for('choose_theater', title=title) }}" class="btn" role="button" aria-pressed="true"
-      style="background-color: #291784; color: #FFFFFF;">Back</a>
   </form>
   {% elif all %}
   <form action="{{ url_for('pick_time', title=title) }}" method=post>
@@ -70,14 +64,19 @@
     <hr>
     {% endfor %}
     <br>
-    <button type="submit" class="btn btn-primary">Next</button>
-    <a href="{{ url_for('choose_theater', title=title) }}" class="btn" role="button" aria-pressed="true"
-      style="background-color: #291784; color: #FFFFFF;">Back</a>
+    <div class="row">
+      <div class="form-group form-check col-sm-2">
+        <input type="checkbox" class="form-check-input" id="save" name="save">
+        <label class="form-check-label" for="save">Save this theater</label>
+      </div>
+      <button type="submit" class="btn btn-primary col-sm-1">Next</button>
+    </div>
   </form>
   {% else %}
   <h2>Search resulted in no theaters!</h2>
+  {% endif %}
+  <br>
   <a href="{{ url_for('choose_theater', title=title) }}" class="btn" role="button" aria-pressed="true"
     style="background-color: #291784; color: #FFFFFF;">Back</a>
-  {% endif %}
 </div>
 {% endblock %}
