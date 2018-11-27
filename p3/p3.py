@@ -232,6 +232,14 @@ def pick_time(title):
 
 @app.route('/movie/<title>/buy_ticket/search_theaters', methods=['GET','POST'])
 def search_theaters(title):
+    search = request.form['search']
+    db = get_db()
+    cur = db.execute('select * from SHOWTIME join THEATER on tid=theater_id where name=?;'[search])
+    name = fetchall()
+    cur = db.execute('select * from SHOWTIME join THEATER on tid=theater_id where city=?;'[search])
+    city = fetchall()
+    cur = db.execute('select * from SHOWTIME join THEATER on tid=theater_id where state=?;'[search])
+    state = cur.fetchall()
     return 'search theaters'
 
 @app.route('/movie/<title>/buy_ticket/select_time/<theater>')

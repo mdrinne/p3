@@ -92,6 +92,7 @@ create table SHOWTIME (
   showtime time not null,
   mtitle varchar[100] not null,
   tID int not null,
+  am BIT not null,
   constraint SHOWTITLE foreign key(mtitle) references MOVIE(title) on delete cascade on update cascade,
   constraint SHOWTHEATRE foreign key(tID) references THEATER(theater_id) on delete cascade on update cascade
 );
