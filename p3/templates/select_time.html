@@ -5,23 +5,32 @@
     <h1 class="display-4">Select Time</h1>
     <hr class="my-4">
   </div>
+  <br>
+  <h2 class="display-8">{{ title }}</h2>
+  <h6 class="font-italic">{{ movie.rating }}, {{ movie.length }} minutes<br>
+                          {{ movie.genre }}</h6>
+  <br>
   <form action="{{ url_for('time_selected', title=title, theater=theater) }}" method=post>
     <div class="form-group">
       <label for="date">Select Date</label>
-      <select class="form-control" id="date">
+      <select class="form-control" id="date" name="date">
         {% for date in dates %}
         <option>{{ date }}</option>
         {% endfor %}
       </select>
     </div>
     <div class="form-group>"
-      <label for="time">Select Time</label>
-      <select class="form-control" id="time">
+      <label for="time">Select a movie time to buy tickets</label>
+      <select class="form-control" id="time" name="time">
         {% for time in times %}
         <option>{{ time }}</option>
         {% endfor %}
       </select>
     </div>
+    <br>
+    <button type="submit" class="btn btn-outline-primary">Submit</button>
+    <a href="{{ url_for('choose_theater', title=title) }}" class="btn" role="button" aria-pressed="true"
+      style="background-color: #291784; color: #FFFFFF;">Back</a>
   </form>
 </div>
 {% endblock %}

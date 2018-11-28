@@ -279,11 +279,20 @@ def select_time(title,theater):
     showtimes = cur.fetchall()
     for showtime in showtimes:
         times.append(showtime['showtime'])
-    return render_template('select_time.html', title=title, theater=theater, dates=dates, times=times)
+    cur = db.execute('select * from MOVIE where title=?;',[title])
+    movie = cur.fetchone()
+    return render_template('select_time.html', title=title, theater=theater, dates=dates, times=times, movie=movie)
 
 @app.route('/movie/<title>/buy_ticket/time_selected/<theater>', methods=['GET','POST'])
 def time_selected(title,theater):
-    return 'time_selected'
+    d = request.form['date']
+    t = request.form['time']
+    return redirect(url_for('tickets', title=title, theater=theater, d=d, t=t))
+    # return 'got em'
+
+@app.route('/movie/<title>/buy_ticket/<theater>/tickets', methods=['GET','POST'])
+def tickets(title,theater,d,t):
+    return render_template('tickets.html')
 
 @app.route('/movie/<title>/review/give_review', methods=['GET','POST'])
 def give_review(title):
