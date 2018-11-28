@@ -5,8 +5,15 @@
     <h1 class="display-4">Select Time</h1>
     <hr class="my-4">
   </div>
-  {% for date in dates %}
-  <h1>{{ date }}</h1>
-  {% endfor %}
+  <form action="{{ url_for('time_selected', title=title, theater=theater) }}" method=post>
+    <div class="form-group">
+      <label for="date">Select Date</label>
+      <select class="form-control" id="date">
+        {% for date in dates %}
+        <option>{{ date }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </form>
 </div>
 {% endblock %}

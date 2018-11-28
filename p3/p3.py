@@ -273,6 +273,10 @@ def select_time(title,theater):
         dates.append((date + datetime.timedelta(days=x)).strftime('%m/%d/%y'))
     return render_template('select_time.html', title=title, theater=theater, dates=dates)
 
+@app.route('/movie/<title>/buy_ticket/time_selected/<theater>', methods=['GET','POST'])
+def time_selected(title,theater):
+    return 'time_selected'
+
 @app.route('/movie/<title>/review/give_review', methods=['GET','POST'])
 def give_review(title):
     error = None
