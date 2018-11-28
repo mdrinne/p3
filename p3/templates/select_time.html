@@ -14,6 +14,14 @@
         {% endfor %}
       </select>
     </div>
+    <div class="form-group>"
+      <label for="time">Select Time</label>
+      <select class="form-control" id="time">
+        {% for time in times %}
+        <option>{{ time }}</option>
+        {% endfor %}
+      </select>
+    </div>
   </form>
 </div>
 {% endblock %}

@@ -268,14 +268,17 @@ def check_save(title):
 @app.route('/movie/<title>/buy_ticket/select_time/<theater>', methods=['GET','POST'])
 def select_time(title,theater):
     dates = []
+    times = []
     date = datetime.datetime.now()
     for x in range(7):
         dates.append((date + datetime.timedelta(days=x)).strftime('%m/%d/%y'))
     db = get_db()
-    cur = db.execute('select theater_id from THEATER where name=?',[theater])
+    cur = db.execute('select theater_id from THEATER where name=?;',[theater])
     id = cur.fetchone()
-    cur = db.execute('select showtime from SHOWTIME where mtitle=? and tID=?',[title,id['theater_id']])
-    times = cur.fetchall()
+    cur = db.execute('select showtime from SHOWTIME where mtitle=? and tID=?;',[title,id['theater_id']])
+    showtimes = cur.fetchall()
+    for showtime in showtimes:
+        times.append(showtime['showtime'])
     return render_template('select_time.html', title=title, theater=theater, dates=dates, times=times)
 
 @app.route('/movie/<title>/buy_ticket/time_selected/<theater>', methods=['GET','POST'])
