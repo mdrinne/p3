@@ -1,0 +1,12 @@
+{% extends "navbar.html" %}
+{% block body %}
+<div class="container">
+  <div class="jumbotron">
+    <h1 class="display-4">Select Time</h1>
+    <hr class="my-4">
+  </div>
+  {% for date in dates %}
+  <h1>{{ date }}</h1>
+  {% endfor %}
+</div>
+{% endblock %}

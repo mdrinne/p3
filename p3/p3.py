@@ -1,5 +1,7 @@
 import os
 import sqlite3
+import datetime
+import calendar
 
 from flask import (Flask, request, session, g, redirect, url_for, abort,
     render_template, flash)
@@ -263,9 +265,13 @@ def check_save(title):
             db.commit()
     return redirect(url_for('select_time', title=title, theater=theater))
 
-@app.route('/movie/<title>/buy_ticket/select_time/<theater>')
+@app.route('/movie/<title>/buy_ticket/select_time/<theater>', methods=['GET','POST'])
 def select_time(title,theater):
-    return 'select time for {} at {}'.format(title,theater)
+    dates = []
+    date = datetime.datetime.now()
+    for x in range(7):
+        dates.append((date + datetime.timedelta(days=x)).strftime('%m/%d/%y'))
+    return render_template('select_time.html', title=title, theater=theater, dates=dates)
 
 @app.route('/movie/<title>/review/give_review', methods=['GET','POST'])
 def give_review(title):
