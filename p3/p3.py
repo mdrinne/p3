@@ -250,19 +250,17 @@ def search_theaters(title):
 
 @app.route('/movie/<title>/buy_ticket/check_save', methods=['GET','POST'])
 def check_save(title):
-    theater = request.form['search']
-    check = request.form.getlist('save')
-    save = bool(check)
+    theater = request.form['theater']
+    save = request.form.get('save', False)
     if save:
-        return 'no save'
-    else:
-        return 'save'
-    # if save:
-    #     db = get_db()
-    #     cur = db.execute('select theater_id from THEATER where name=?',[theater])
-    #     id = cur.fetchone()
-    #     db.execute('insert into PREFERS (theater_id,username) values (?,?);',[id['theater_id'],session.get('user')])
-    #     db.commit()
+        db = get_db()
+        cur = db.execute('select theater_id from THEATER where name=?',[theater])
+        id = cur.fetchone()
+        cur = db.execute('select * from PREFERS where theater_id=? and username=?',[id['theater_id'],session.get('user')])
+        temp = cur.fetchone()
+        if not temp:
+            db.execute('insert into PREFERS (theater_id,username) values (?,?);',[id['theater_id'],session.get('user')])
+            db.commit()
     return redirect(url_for('select_time', title=title, theater=theater))
 
 @app.route('/movie/<title>/buy_ticket/select_time/<theater>')
