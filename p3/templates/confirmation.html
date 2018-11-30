@@ -1,0 +1,25 @@
+{% extends "navbar.html" %}
+{% block body %}
+<div class="container">
+  <div class="jumbotron">
+    <h1 class="display-4">Buy Ticket</h1>
+    <hr class="my-4">
+    <div class="row">
+      <div class="column" style="width: 33%; padding-left: 2%;">
+        <h4>{{ movie.title }}</h4>
+        <h8 class="font-italic">{{ movie.rating }}, {{ movie.length }} minutes</h8>
+        <br><br>
+        <h6>{{ day }}, {{ month }} {{ da.day }}<br>{{ t }}</h6>
+      </div>
+      <div class="column" style="width: 33%; padding-left: 5%;">
+        <h4>{{ theater.name }}</h4>
+        <h8>{{ theater.street }}</h8>
+        <br>
+        <h8>{{ theater.city }}, {{ theater.state }} {{ theater.zip }}</h8>
+      </div>
+    </div>
+    <hr class="my-4">
+  </div>
+  <h1>{{ session.get('oID') }}</h1>
+</div>
+{% endblock %}

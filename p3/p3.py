@@ -374,13 +374,17 @@ def add_card():
         db.commit()
     # session['card'] = cardno
     cd = cur_date.strftime('%m/%d/%Y')
-    ct = cur_date.strftime('%I:%m%p')
+    ct = cur_date.strftime('%I:%M%p')
     tt = int(session.get('adult')) + int(session.get('child')) + int(session.get('senior'))
     cur = db.execute('select theater_id from THEATER where name=?;',[session.get('theater')])
     tID = cur.fetchone()
     db.execute('insert into ORDERS (o_date,senior_tickets,child_tickets,adult_tickets,total_tickets,o_time,status,card_number,username,title,theater_id) values (?,?,?,?,?,?,?,?,?,?,?);',
         [cd,int(session.get('senior')),int(session.get('child')),int(session.get('adult')),int(tt),ct,'unused',int(cardno),session.get('user'),session.get('title'),int(tID['theater_id'])])
     db.commit()
+    cur = db.execute('select order_ID from ORDERS where o_date=? and o_time=? and card_number=? and username=? and title=? and theater_id=?',
+                        [cd,ct,cardno,session.get('user'),session.get('title'),int(tID['theater_id'])])
+    oID = cur.fetchone()
+    session['oID'] = oID['order_ID']
     return redirect(url_for('confirmation'))
 
 @app.route('/movie/saved_card', methods=['GET','POST'])
@@ -389,7 +393,7 @@ def saved_card():
     db = get_db()
     cur_date = datetime.datetime.now()
     cd = cur_date.strftime('%m/%d/%Y')
-    ct = cur_date.strftime('%I:%m%p')
+    ct = cur_date.strftime('%I:%M%p')
     tt = int(session.get('adult')) + int(session.get('child')) + int(session.get('senior'))
     cur = db.execute('select theater_id from THEATER where name=?;',[session.get('theater')])
     tID = cur.fetchone()
@@ -400,7 +404,19 @@ def saved_card():
 
 @app.route('/movie/buy_ticket/confirmation', methods=['GET','POST'])
 def confirmation():
-    return 'confirmation'
+    theater = session.get('theater')
+    title = session.get('title')
+    db = get_db()
+    cur = db.execute('select * from THEATER where name=?;',[theater])
+    theater = cur.fetchone()
+    cur = db.execute('select * from MOVIE where title=?;',[title])
+    movie = cur.fetchone()
+    d = session.get('date')
+    t = session.get('time')
+    da = datetime.datetime.strptime(d,'%m/%d/%Y')
+    month = calendar.month_name[int(da.month)]
+    day = calendar.day_name[int(da.weekday())]
+    return render_template('confirmation.html', theater=theater, title=title, da=da, day=day, month=month, t=t, movie=movie)
 
 @app.route('/movie/<title>/review/give_review', methods=['GET','POST'])
 def give_review(title):
