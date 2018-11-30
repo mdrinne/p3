@@ -385,7 +385,17 @@ def add_card():
 
 @app.route('/movie/saved_card', methods=['GET','POST'])
 def saved_card():
-    session['card'] = int(request.form['saved'])
+    # session['card'] = int(request.form['saved'])
+    db = get_db()
+    cur_date = datetime.datetime.now()
+    cd = cur_date.strftime('%m/%d/%Y')
+    ct = cur_date.strftime('%I:%m%p')
+    tt = int(session.get('adult')) + int(session.get('child')) + int(session.get('senior'))
+    cur = db.execute('select theater_id from THEATER where name=?;',[session.get('theater')])
+    tID = cur.fetchone()
+    db.execute('insert into ORDERS (o_date,senior_tickets,child_tickets,adult_tickets,total_tickets,o_time,status,card_number,username,title,theater_id) values (?,?,?,?,?,?,?,?,?,?,?);',
+        [cd,int(session.get('senior')),int(session.get('child')),int(session.get('adult')),int(tt),ct,'unused',int(request.form['saved']),session.get('user'),session.get('title'),int(tID['theater_id'])])
+    db.commit()
     return redirect(url_for('confirmation'))
 
 @app.route('/movie/buy_ticket/confirmation', methods=['GET','POST'])
