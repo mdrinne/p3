@@ -302,13 +302,15 @@ def tickets(title,theater):
     month = calendar.month_name[int(da.month)]
     day = calendar.day_name[int(da.weekday())]
     return render_template('tickets.html', title=title, theater=theater, month=month, day=day, da=da, t=t, movie=movie, child=child, senior=senior)
-    # return 'got em'
 
 @app.route('/movie/<title>/buy_ticket/<theater>/payment_info', methods=['GET','POST'])
 def card_info(title,theater):
-    adult = request.form['adult']
-    senior = request.form['senior']
-    child = request.form['child']
+    session['title'] = title
+    session['theater'] = theater
+    if request.method == 'POST':
+        session['adult'] = request.form['adult']
+        session['senior'] = request.form['senior']
+        session['child'] = request.form['child']
     db = get_db()
     cur = db.execute('select * from THEATER where name=?;',[theater])
     theater = cur.fetchone()
@@ -318,7 +320,8 @@ def card_info(title,theater):
     c = cur.fetchone()
     cur = db.execute('select senior_discount as disc from SYSTEM_INFO where senior_discount is not null;')
     s = cur.fetchone()
-    total = (int(adult)*11.54) + (int(senior)*11.54*s['disc']) + (int(child)*11.54*c['disc'])
+    total = (int(session['adult'])*11.54) + (int(session['senior'])*11.54*s['disc']) + (int(session['child'])*11.54*c['disc'])
+    total = round(total,2)
     cards = []
     cur = db.execute('select card_no from PAYMENT_INFO where username=? and saved=1;',[session.get('user')])
     list = cur.fetchall()
@@ -330,6 +333,64 @@ def card_info(title,theater):
     month = calendar.month_name[int(da.month)]
     day = calendar.day_name[int(da.weekday())]
     return render_template('card_info.html', theater=theater, movie=movie, total=total, cards=cards, month=month, day=day, da=da, t=t)
+
+@app.route('/add_card', methods=['GET','POST'])
+def add_card():
+    error = None
+    cname = request.form['cname']
+    cno = request.form['cno']
+    cvv = int(request.form['cvv'])
+    exp = request.form['exp']
+    save = request.form.get('save', False)
+    cardno = int(cno)
+    db = get_db()
+    cur = db.execute('select card_no from PAYMENT_INFO where card_no=?;',[cardno])
+    card = cur.fetchone()
+    if not cname or not cno or not cvv or not exp:
+        error = 'Must fill out all fields'
+        return render_template('error.html', error=error, theater=session.get('theater'))
+    cur_date = datetime.datetime.now()
+    d = request.form.get('exp')
+    date = datetime.datetime.strptime(request.form['exp'],'%m/%Y')
+    if (cur_date.year < date.year):
+        if (cur_date.month < date.month):
+            error = "Exp date must be after current date"
+    else:
+        error = "Exp date must be after current date"
+    if error:
+        return render_template('error.html', error=error)
+    if save and card:
+        db.execute('update PAYMENT_INFO set saved=1 where card_no=?;',[cardno])
+        db.commit()
+    if save and not card:
+        db.execute('insert into PAYMENT_INFO values (?,?,?,?,?,?)',
+            [cardno,cvv,cname,exp,1,session.get('user')])
+        db.commit()
+    if not save and not card:
+        db.execute('insert into PAYMENT_INFO values (?,?,?,?,?,?)',
+            [cardno,cvv,cname,exp,0,session.get('user')])
+        db.commit()
+
+    return '{}'.format(cardno)
+    # else:
+    #     cname = request.form['cname']
+    #     cno = request.form['cno']
+    #     cvv = request.form['cvv']
+    #     exp = request.form['exp']
+    #     save = request.form.get('save', False)
+    #     if not cname or not cno or not cvv or not exp:
+    #         error = 'Must fill out all fields'
+    #         return render_template('error.html', error=error, theater=theater)
+    #     else:
+    #         # db = get_db()
+    #         # if save:
+    #         #     cur = db.execute('insert into ORDERS')
+    #         pass
+    # return redirect(url_for('confirmation', title=title, theater=theater))
+
+@app.route('/movie/buy_ticket/confirmation', methods=['GET','POST'])
+def confirmation(title,theater):
+    return 'confirmation'
 
 @app.route('/movie/<title>/review/give_review', methods=['GET','POST'])
 def give_review(title):
