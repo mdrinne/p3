@@ -1,0 +1,8 @@
+{% extends "navbar.html" %}
+{% block body %}
+<div class="container">
+  <h1 class="redtext">{{ error }}</h1><br>
+  <a href="{{ url_for('card_info', title=session.get('title'), theater=session.get('theater')) }}" class="btn" role="button" aria-pressed="true"
+    style="background-color: #291784; color: #FFFFFF;">Back</a>
+</div>
+{% endblock %}

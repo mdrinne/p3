@@ -20,5 +20,54 @@
     </div>
     <hr class="my-4">
   </div>
+  <h1 class="display-4">Payment Information</h1>
+  <h2>Total: {{ total }}</h2>
+  <br>
+  <form action="{{ url_for('card_info', title=title, theater=theater.name) }}" method=post>
+    <div class="row">
+      <label for="saved" class="col-sm-2 col-form-label">Use a saved card</label>
+      <div class="col-sm-2">
+        <select class="form-control" id="saved" name="saved">
+          {% for card in cards %}
+          <option>{{ card }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="btn" style="background-color: #291784; color: #FFFFFF;">Buy Ticket</button>
+    </div>
+  </form>
+  <hr class="my-4">
+  <form action="{{ url_for('add_card') }}" method=post>
+    <h2>Use a new card</h2>
+    <br>
+    <div class="row">
+      <label for="cname" class="col-sm-2 col-form-label">Name on Card</label>
+      <input type="text" class="col-sm-6 form-control" id="cname" placeholder="Name on Card (50 character max)" name="cname" maxlength=50>
+    </div>
+    <br>
+    <div class="row">
+      <label for="cno" class="col-sm-2 col-form-label">Card Number</label>
+      <input type="int" class="col-sm-2 form-control" id="cno" placeholder="Card Number" name="cno" maxlength=16>
+    </div>
+    <br>
+    <div class="row">
+      <label for="cvv" class="col-sm-2 col-form-label">CVV</label>
+      <input type="int" class="col-sm-1 form-control" id="cvv" placeholder="CVV" name="cvv" maxlength=3>
+    </div>
+    <br>
+    <div class="row">
+      <label for="exp" class="col-sm-2 col-form-label">Exp. Date</label>
+      <input type="text" class="col-sm-2 form-control" id="exp" placeholder="MM/YYYY" name="exp" maxlength=7>
+    </div>
+    <br>
+    <div class="row">
+      <div class="form-check col-sm-3">
+        <input type="checkbox" class="form-check-input" id="save" name="save">
+        <label class="form-check-label" for="save">Save this card for later use</label>
+      </div>
+      <button type="submit" class="btn btn-outline-primary col-sm-1">Submit</button>
+    </div>
+  </form>
+  <br><br><br>
 </div>
 {% endblock %}
