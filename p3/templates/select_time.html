@@ -10,7 +10,9 @@
   <h6 class="font-italic">{{ movie.rating }}, {{ movie.length }} minutes<br>
                           {{ movie.genre }}</h6>
   <br>
-  <form action="{{ url_for('time_selected', title=title, theater=theater) }}" method=post>
+  <h2 class="display-8">{{ theater }}</h2>
+  <br>
+  <form action="{{ url_for('tickets', title=title, theater=theater) }}" method=post>
     <div class="form-group">
       <label for="date">Select Date</label>
       <select class="form-control" id="date" name="date">
@@ -32,5 +34,6 @@
     <a href="{{ url_for('choose_theater', title=title) }}" class="btn" role="button" aria-pressed="true"
       style="background-color: #291784; color: #FFFFFF;">Back</a>
   </form>
+  <br><br><br><br>
 </div>
 {% endblock %}

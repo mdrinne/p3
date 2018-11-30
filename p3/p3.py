@@ -271,7 +271,7 @@ def select_time(title,theater):
     times = []
     date = datetime.datetime.now()
     for x in range(7):
-        dates.append((date + datetime.timedelta(days=x)).strftime('%m/%d/%y'))
+        dates.append((date + datetime.timedelta(days=x)).strftime('%m/%d/%Y'))
     db = get_db()
     cur = db.execute('select theater_id from THEATER where name=?;',[theater])
     id = cur.fetchone()
@@ -283,16 +283,53 @@ def select_time(title,theater):
     movie = cur.fetchone()
     return render_template('select_time.html', title=title, theater=theater, dates=dates, times=times, movie=movie)
 
-@app.route('/movie/<title>/buy_ticket/time_selected/<theater>', methods=['GET','POST'])
-def time_selected(title,theater):
+@app.route('/movie/<title>/buy_ticket/<theater>/tickets', methods=['GET','POST'])
+def tickets(title,theater):
     d = request.form['date']
+    session['date'] = d
     t = request.form['time']
-    return redirect(url_for('tickets', title=title, theater=theater, d=d, t=t))
+    session['time'] = t
+    db = get_db()
+    cur = db.execute('select * from THEATER where name=?;',[theater])
+    theater = cur.fetchone()
+    cur = db.execute('select * from MOVIE where title=?;',[title])
+    movie = cur.fetchone()
+    cur = db.execute('select child_discount as disc from SYSTEM_INFO where child_discount is not null;')
+    child = cur.fetchone()
+    cur = db.execute('select senior_discount as disc from SYSTEM_INFO where senior_discount is not null;')
+    senior = cur.fetchone()
+    da = datetime.datetime.strptime(d,'%m/%d/%Y')
+    month = calendar.month_name[int(da.month)]
+    day = calendar.day_name[int(da.weekday())]
+    return render_template('tickets.html', title=title, theater=theater, month=month, day=day, da=da, t=t, movie=movie, child=child, senior=senior)
     # return 'got em'
 
-@app.route('/movie/<title>/buy_ticket/<theater>/tickets', methods=['GET','POST'])
-def tickets(title,theater,d,t):
-    return render_template('tickets.html')
+@app.route('/movie/<title>/buy_ticket/<theater>/payment_info', methods=['GET','POST'])
+def card_info(title,theater):
+    adult = request.form['adult']
+    senior = request.form['senior']
+    child = request.form['child']
+    db = get_db()
+    cur = db.execute('select * from THEATER where name=?;',[theater])
+    theater = cur.fetchone()
+    cur = db.execute('select * from MOVIE where title=?;',[title])
+    movie = cur.fetchone()
+    cur = db.execute('select child_discount as disc from SYSTEM_INFO where child_discount is not null;')
+    c = cur.fetchone()
+    cur = db.execute('select senior_discount as disc from SYSTEM_INFO where senior_discount is not null;')
+    s = cur.fetchone()
+    total = (int(adult)*11.54) + (int(senior)*11.54*s['disc']) + (int(child)*11.54*c['disc'])
+    cards = []
+    cur = db.execute('select card_no from PAYMENT_INFO where username=? and saved=1;',[session.get('user')])
+    list = cur.fetchall()
+    for item in list:
+        cards.append(item['card_no'])
+    d = session.get('date')
+    t = session.get('time')
+    da = datetime.datetime.strptime(d,'%m/%d/%Y')
+    month = calendar.month_name[int(da.month)]
+    day = calendar.day_name[int(da.weekday())]
+    return render_template('card_info.html', theater=theater, movie=movie, total=total, cards=cards, month=month, day=day, da=da, t=t)
 
 @app.route('/movie/<title>/review/give_review', methods=['GET','POST'])
 def give_review(title):
