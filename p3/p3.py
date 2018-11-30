@@ -285,10 +285,11 @@ def select_time(title,theater):
 
 @app.route('/movie/<title>/buy_ticket/<theater>/tickets', methods=['GET','POST'])
 def tickets(title,theater):
-    d = request.form['date']
-    session['date'] = d
-    t = request.form['time']
-    session['time'] = t
+    if request.method == 'POST':
+        d = request.form['date']
+        session['date'] = d
+        t = request.form['time']
+        session['time'] = t
     db = get_db()
     cur = db.execute('select * from THEATER where name=?;',[theater])
     theater = cur.fetchone()
@@ -298,10 +299,10 @@ def tickets(title,theater):
     child = cur.fetchone()
     cur = db.execute('select senior_discount as disc from SYSTEM_INFO where senior_discount is not null;')
     senior = cur.fetchone()
-    da = datetime.datetime.strptime(d,'%m/%d/%Y')
+    da = datetime.datetime.strptime(session['date'],'%m/%d/%Y')
     month = calendar.month_name[int(da.month)]
     day = calendar.day_name[int(da.weekday())]
-    return render_template('tickets.html', title=title, theater=theater, month=month, day=day, da=da, t=t, movie=movie, child=child, senior=senior)
+    return render_template('tickets.html', title=title, theater=theater, month=month, day=day, da=da, t=session.get('time'), movie=movie, child=child, senior=senior)
 
 @app.route('/movie/<title>/buy_ticket/<theater>/payment_info', methods=['GET','POST'])
 def card_info(title,theater):
@@ -370,26 +371,24 @@ def add_card():
         db.execute('insert into PAYMENT_INFO values (?,?,?,?,?,?)',
             [cardno,cvv,cname,exp,0,session.get('user')])
         db.commit()
+    # session['card'] = cardno
+    cd = cur_date.strftime('%m/%d/%Y')
+    ct = cur_date.strftime('%I:%m%p')
+    tt = int(session.get('adult')) + int(session.get('child')) + int(session.get('senior'))
+    cur = db.execute('select theater_id from THEATER where name=?;',[session.get('theater')])
+    tID = cur.fetchone()
+    db.execute('insert into ORDERS (o_date,senior_tickets,child_tickets,adult_tickets,total_tickets,o_time,status,card_number,username,title,theater_id) values (?,?,?,?,?,?,?,?,?,?,?);'
+        [cd,int(session.get('senior')),int(session.get('child')),int(session.get('adult')),int(tt),ct,'unused',int(cardno),session.get('user'),session.get('title'),int(tID['theater_id'])])
+    db.commit()
+    return redirect(url_for('confirmation'))
 
-    return '{}'.format(cardno)
-    # else:
-    #     cname = request.form['cname']
-    #     cno = request.form['cno']
-    #     cvv = request.form['cvv']
-    #     exp = request.form['exp']
-    #     save = request.form.get('save', False)
-    #     if not cname or not cno or not cvv or not exp:
-    #         error = 'Must fill out all fields'
-    #         return render_template('error.html', error=error, theater=theater)
-    #     else:
-    #         # db = get_db()
-    #         # if save:
-    #         #     cur = db.execute('insert into ORDERS')
-    #         pass
-    # return redirect(url_for('confirmation', title=title, theater=theater))
+@app.route('/movie/saved_card', methods=['GET','POST'])
+def saved_card():
+    session['card'] = int(request.form['saved'])
+    return redirect(url_for('confirmation'))
 
 @app.route('/movie/buy_ticket/confirmation', methods=['GET','POST'])
-def confirmation(title,theater):
+def confirmation():
     return 'confirmation'
 
 @app.route('/movie/<title>/review/give_review', methods=['GET','POST'])

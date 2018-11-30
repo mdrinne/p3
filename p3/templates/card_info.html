@@ -23,7 +23,7 @@
   <h1 class="display-4">Payment Information</h1>
   <h2>Total: {{ total }}</h2>
   <br>
-  <form action="{{ url_for('card_info', title=title, theater=theater.name) }}" method=post>
+  <form action="{{ url_for('saved_card') }}" method=post>
     <div class="row">
       <label for="saved" class="col-sm-2 col-form-label">Use a saved card</label>
       <div class="col-sm-2">
@@ -68,6 +68,9 @@
       <button type="submit" class="btn btn-outline-primary col-sm-1">Submit</button>
     </div>
   </form>
+  <br>
+  <a href="{{ url_for('tickets', title=session.get('title'), theater=session.get('theater')) }}" class="btn" role="button" aria-pressed="true"
+    style="background-color: #291784; color: #FFFFFF;">Back</a>
   <br><br><br>
 </div>
 {% endblock %}
