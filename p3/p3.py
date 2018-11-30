@@ -340,13 +340,9 @@ def add_card():
     error = None
     cname = request.form['cname']
     cno = request.form['cno']
-    cvv = int(request.form['cvv'])
+    cvv = request.form['cvv']
     exp = request.form['exp']
     save = request.form.get('save', False)
-    cardno = int(cno)
-    db = get_db()
-    cur = db.execute('select card_no from PAYMENT_INFO where card_no=?;',[cardno])
-    card = cur.fetchone()
     if not cname or not cno or not cvv or not exp:
         error = 'Must fill out all fields'
         return render_template('error.html', error=error, theater=session.get('theater'))
@@ -360,6 +356,11 @@ def add_card():
         error = "Exp date must be after current date"
     if error:
         return render_template('error.html', error=error)
+    cvv = int(cvv)
+    cardno = int(cno)
+    db = get_db()
+    cur = db.execute('select card_no from PAYMENT_INFO where card_no=?;',[cardno])
+    card = cur.fetchone()
     if save and card:
         db.execute('update PAYMENT_INFO set saved=1 where card_no=?;',[cardno])
         db.commit()
@@ -377,7 +378,7 @@ def add_card():
     tt = int(session.get('adult')) + int(session.get('child')) + int(session.get('senior'))
     cur = db.execute('select theater_id from THEATER where name=?;',[session.get('theater')])
     tID = cur.fetchone()
-    db.execute('insert into ORDERS (o_date,senior_tickets,child_tickets,adult_tickets,total_tickets,o_time,status,card_number,username,title,theater_id) values (?,?,?,?,?,?,?,?,?,?,?);'
+    db.execute('insert into ORDERS (o_date,senior_tickets,child_tickets,adult_tickets,total_tickets,o_time,status,card_number,username,title,theater_id) values (?,?,?,?,?,?,?,?,?,?,?);',
         [cd,int(session.get('senior')),int(session.get('child')),int(session.get('adult')),int(tt),ct,'unused',int(cardno),session.get('user'),session.get('title'),int(tID['theater_id'])])
     db.commit()
     return redirect(url_for('confirmation'))
