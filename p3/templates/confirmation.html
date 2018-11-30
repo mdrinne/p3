@@ -20,6 +20,13 @@
     </div>
     <hr class="my-4">
   </div>
-  <h1>{{ session.get('oID') }}</h1>
+  <h4 class="display-4">Confirmation</h4>
+  <br><br>
+  <h4>Order ID: {{ session.get('oID') }}</h4>
+  <h6>Thank you for your purchase! Please save order ID for your records</h6>
+  <br>
+  <a href="{{ url_for('now_playing') }}" class="btn" role="button" aria-pressed="true"
+    style="background-color: #291784; color: #FFFFFF;">Back to Now Playing</a>
+  <br><br><br>
 </div>
 {% endblock %}

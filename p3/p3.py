@@ -379,10 +379,10 @@ def add_card():
     cur = db.execute('select theater_id from THEATER where name=?;',[session.get('theater')])
     tID = cur.fetchone()
     db.execute('insert into ORDERS (o_date,senior_tickets,child_tickets,adult_tickets,total_tickets,o_time,status,card_number,username,title,theater_id) values (?,?,?,?,?,?,?,?,?,?,?);',
-        [cd,int(session.get('senior')),int(session.get('child')),int(session.get('adult')),int(tt),ct,'unused',int(cardno),session.get('user'),session.get('title'),int(tID['theater_id'])])
+        [session.get('date'),int(session.get('senior')),int(session.get('child')),int(session.get('adult')),int(tt),session.get('time'),'unused',int(cardno),session.get('user'),session.get('title'),int(tID['theater_id'])])
     db.commit()
     cur = db.execute('select order_ID from ORDERS where o_date=? and o_time=? and card_number=? and username=? and title=? and theater_id=?',
-                        [cd,ct,cardno,session.get('user'),session.get('title'),int(tID['theater_id'])])
+                        [session.get('date'),session.get('time'),cardno,session.get('user'),session.get('title'),int(tID['theater_id'])])
     oID = cur.fetchone()
     session['oID'] = oID['order_ID']
     return redirect(url_for('confirmation'))
@@ -398,8 +398,12 @@ def saved_card():
     cur = db.execute('select theater_id from THEATER where name=?;',[session.get('theater')])
     tID = cur.fetchone()
     db.execute('insert into ORDERS (o_date,senior_tickets,child_tickets,adult_tickets,total_tickets,o_time,status,card_number,username,title,theater_id) values (?,?,?,?,?,?,?,?,?,?,?);',
-        [cd,int(session.get('senior')),int(session.get('child')),int(session.get('adult')),int(tt),ct,'unused',int(request.form['saved']),session.get('user'),session.get('title'),int(tID['theater_id'])])
+        [session.get('date'),int(session.get('senior')),int(session.get('child')),int(session.get('adult')),int(tt),session.get('time'),'unused',int(request.form['saved']),session.get('user'),session.get('title'),int(tID['theater_id'])])
     db.commit()
+    cur = db.execute('select order_ID from ORDERS where o_date=? and o_time=? and card_number=? and username=? and title=? and theater_id=?',
+                        [session.get('date'),session.get('time'),int(request.form['saved']),session.get('user'),session.get('title'),int(tID['theater_id'])])
+    oID = cur.fetchone()
+    session['oID'] = oID['order_ID']
     return redirect(url_for('confirmation'))
 
 @app.route('/movie/buy_ticket/confirmation', methods=['GET','POST'])
