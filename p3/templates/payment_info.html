@@ -39,9 +39,10 @@
     {% if cards %}
     <button type="submit" class="btn btn-primary">Delete</button>
     {% endif %}
-    <a href="{{ url_for('me') }}" class="btn" role="button" aria-pressed="true"
-      style="background-color: #291784; color: #FFFFFF;">Back</a>
   </form>
   {% endif %}
+  <br>
+  <a href="{{ url_for('me') }}" class="btn" role="button" aria-pressed="true"
+    style="background-color: #291784; color: #FFFFFF;">Back</a>
 </div>
 {% endblock %}
