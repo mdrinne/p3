@@ -1,0 +1,36 @@
+{% extends "navbar.html" %}
+{% block body %}
+<div class="container">
+  <div class="jumbotron">
+    <h1 class="display-4">Order Detail</h1>
+    <hr class="my-4">
+  </div>
+  <div class="row">
+    <div class="column" style="padding-left: 2%;">
+      <h4>{{ order.title }}</h4>
+      <h8 class="font-italic">{{ order.rating }}, {{ order.length }} minutes</h8>
+      <br><br>
+      <h6>{{ day }}, {{ month }} {{ da.day }}<br>{{ order.o_time }}</h6>
+    </div>
+    <div class="column" style="padding-left: 5%">
+      <h4>{{ order.name }}</h4>
+      <h8>{{ order.street }}</h8>
+      <br>
+      <h8>{{ order.city }}, {{ order.state }} {{ order.zip }}</h8>
+    </div>
+  </div>
+  <br>
+  <h6>{{ order.adult_tickets }} adult tickets</h6>
+  <h6>{{ order.child_tickets }} child tickets</h6>
+  <h6>{{ order.senior_tickets }} senior tickets</h6>
+  <br>
+  <h4>Total: ${{ total }}</h4>
+  <br>
+  {% if order.status != 'cancelled' %}
+  <a href="{{ url_for('cancel') }}" class="btn" style="background-color: #291784; color: #FFFFFF;">Cancel order</a>
+  {% endif %}
+  <br><br>
+  <a href="{{ url_for('order_history') }}" class="btn" role="button" aria-pressed="true"
+    style="background-color: #291784; color: #FFFFFF;">Back</a>
+</div>
+{% endblock %}

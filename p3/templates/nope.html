@@ -1,0 +1,9 @@
+{% extends "navbar.html" %}
+{% block body %}
+<div class="container">
+  <h1 class="display-4">You don't have an order with that ID</h1>
+  <br>
+  <a href="{{ url_for('order_history') }}" class="btn" role="button" aria-pressed="true"
+    style="background-color: #291784; color: #FFFFFF;">Back</a>
+</div>
+{% endblock %}

@@ -196,7 +196,27 @@ def order_detail():
     db = get_db()
     cur = db.execute('select * from ORDERS as o join Movie as m on o.title=m.title join THEATER as t on o.theater_id=t.theater_id where order_id=? and username=?;',[id,session.get('user')])
     order = cur.fetchone()
-    return '{}'.format(id)
+    if not order:
+        return render_template('nope.html')
+    da = datetime.datetime.strptime(order['o_date'],'%m/%d/%Y')
+    month = calendar.month_name[int(da.month)]
+    day = calendar.day_name[int(da.weekday())]
+    cur = db.execute('select child_discount as disc from SYSTEM_INFO where child_discount is not null;')
+    c = cur.fetchone()
+    cur = db.execute('select senior_discount as disc from SYSTEM_INFO where senior_discount is not null;')
+    s = cur.fetchone()
+    total = round((int(order['adult_tickets'])*11.54)+(int(order['child_tickets'])*11.54*c['disc'])+(int(order['senior_tickets'])*11.54*s['disc']),2)
+    if order['status'] == 'cancelled':
+        total = total - 5
+    session['cancel'] = order['order_ID']
+    return render_template('order_detail.html', order=order, da=da, day=day, month=month, total=total, id=id)
+
+@app.route('/order/cancel', methods=['GET','POST'])
+def cancel():
+    db = get_db()
+    db.execute('update ORDERS set status="cancelled" where order_ID=?;',[session.get('cancel')])
+    db.commit()
+    return redirect(url_for('order_history'))
 
 @app.route('/payment_info', methods=['GET', 'POST'])
 def payment_info():
