@@ -156,7 +156,26 @@ def manager():
 
 @app.route('/manager/revenue_report', methods=['GET'])
 def revenue_report():
-    return 'revenue_report'
+    db = get_db()
+    cur = db.execute('select strftime("%m", o_date) as m, sum(adult_tickets) as a_t, sum(child_tickets) as c_t, sum(senior_tickets) as s_t from ORDERS where status!="cancelled" group by strftime("%m", o_date) order by m desc;')
+    months = cur.fetchall()
+    cur = db.execute('select strftime("%m", o_date) as m, count(*) as c from ORDERS where status="cancelled" group by strftime("%m", o_date);')
+    canc = cur.fetchall()
+    cur = db.execute('select child_discount as disc from SYSTEM_INFO where child_discount is not null;')
+    c = cur.fetchone()
+    cur = db.execute('select senior_discount as disc from SYSTEM_INFO where senior_discount is not null;')
+    s = cur.fetchone()
+    revenues = []
+    for month in months:
+        total = (int(month['a_t'])*11.54) + (int(month['s_t'])*11.54*s['disc']) + (int(month['c_t'])*11.54*c['disc'])
+        total = round(total, 2)
+        for can in canc:
+            if can['m'] == month['m']:
+                total = total + (int(can['c']) * 5)
+        date = datetime.datetime.strptime(month['m'],'%m')
+        mon = calendar.month_name[date.month]
+        revenues.append({'total':total, 'mon':mon})
+    return render_template('revenue_report.html', revenues=revenues)
 
 @app.route('/manager/popular_movie', methods=['GET'])
 def popular_movie():
@@ -164,29 +183,30 @@ def popular_movie():
     month1 = []
     date = datetime.datetime.now()
     month = date.month
-    year = date.year
     month1_name = calendar.month_name[month]
-    temp = str(month) + '/%/' + str(year)
-    cur = db.execute('select title, count(*) as count from ORDERS where o_date like ? group by title order by count(*) desc limit 3;',[temp])
+    temp = date.strftime('%Y-%m') + '%'
+    cur = db.execute('select title, count(*) as count from ORDERS where o_date like ? group by title order by count(*) desc limit 3;',[str(temp)])
     months = cur.fetchall()
+    if not months:
+        return 'nope'
     for month in months:
         month1.append(month)
-    date = date - datetime.timedelta(days=31)
+    date = date - datetime.timedelta(days=30)
     month2 = []
     month = date.month
     year = date.year
     month2_name = calendar.month_name[month]
-    temp = str(month) + '/%/' + str(year)
+    temp = str(year) + '-' + str(month) + '-%'
     cur = db.execute('select title, count(*) as count from ORDERS where o_date like ? group by title order by count(*) desc limit 3;',[temp])
     months = cur.fetchall()
     for month in months:
         month2.append(month)
-    date = date - datetime.timedelta(days=31)
+    date = date - datetime.timedelta(days=30)
     month3 = []
     month = date.month
     year = date.year
     month3_name = calendar.month_name[month]
-    temp = str(month) + '/%/' + str(year)
+    temp = str(year) + '-' + str(month) + '-%'
     cur = db.execute('select title, count(*) as count from ORDERS where o_date like ? group by title order by count(*) desc limit 3;',[temp])
     months = cur.fetchall()
     for month in months:
@@ -241,7 +261,7 @@ def order_detail():
     order = cur.fetchone()
     if not order:
         return render_template('nope.html')
-    da = datetime.datetime.strptime(order['o_date'],'%m/%d/%Y')
+    da = datetime.datetime.strptime(order['o_date'],'%Y-%m-%d')
     month = calendar.month_name[int(da.month)]
     day = calendar.day_name[int(da.weekday())]
     cur = db.execute('select child_discount as disc from SYSTEM_INFO where child_discount is not null;')
@@ -355,7 +375,7 @@ def select_time(title,theater):
     times = []
     date = datetime.datetime.now()
     for x in range(7):
-        dates.append((date + datetime.timedelta(days=x)).strftime('%m/%d/%Y'))
+        dates.append((date + datetime.timedelta(days=x)).strftime('%Y-%m-%d'))
     db = get_db()
     cur = db.execute('select theater_id from THEATER where name=?;',[theater])
     id = cur.fetchone()
@@ -383,7 +403,7 @@ def tickets(title,theater):
     child = cur.fetchone()
     cur = db.execute('select senior_discount as disc from SYSTEM_INFO where senior_discount is not null;')
     senior = cur.fetchone()
-    da = datetime.datetime.strptime(session['date'],'%m/%d/%Y')
+    da = datetime.datetime.strptime(session['date'],'%Y-%m-%d')
     month = calendar.month_name[int(da.month)]
     day = calendar.day_name[int(da.weekday())]
     return render_template('tickets.html', title=title, theater=theater, month=month, day=day, da=da, t=session.get('time'), movie=movie, child=child, senior=senior)
@@ -414,7 +434,7 @@ def card_info(title,theater):
         cards.append(item['card_no'])
     d = session.get('date')
     t = session.get('time')
-    da = datetime.datetime.strptime(d,'%m/%d/%Y')
+    da = datetime.datetime.strptime(d,'%Y-%m-%d')
     month = calendar.month_name[int(da.month)]
     day = calendar.day_name[int(da.weekday())]
     return render_template('card_info.html', theater=theater, movie=movie, total=total, cards=cards, month=month, day=day, da=da, t=t)
@@ -457,8 +477,8 @@ def add_card():
             [cardno,cvv,cname,exp,0,session.get('user')])
         db.commit()
     # session['card'] = cardno
-    cd = cur_date.strftime('%m/%d/%Y')
-    ct = cur_date.strftime('%I:%M%p')
+    # cd = cur_date.strftime('%m/%d/%Y')
+    # ct = cur_date.strftime('%I:%M%p')
     tt = int(session.get('adult')) + int(session.get('child')) + int(session.get('senior'))
     cur = db.execute('select theater_id from THEATER where name=?;',[session.get('theater')])
     tID = cur.fetchone()
@@ -474,9 +494,9 @@ def add_card():
 @app.route('/movie/saved_card', methods=['GET','POST'])
 def saved_card():
     db = get_db()
-    cur_date = datetime.datetime.now()
-    cd = cur_date.strftime('%m/%d/%Y')
-    ct = cur_date.strftime('%I:%M%p')
+    # cur_date = datetime.datetime.now()
+    # cd = cur_date.strftime('%m/%d/%Y')
+    # ct = cur_date.strftime('%I:%M%p')
     tt = int(session.get('adult')) + int(session.get('child')) + int(session.get('senior'))
     cur = db.execute('select theater_id from THEATER where name=?;',[session.get('theater')])
     tID = cur.fetchone()
@@ -500,7 +520,7 @@ def confirmation():
     movie = cur.fetchone()
     d = session.get('date')
     t = session.get('time')
-    da = datetime.datetime.strptime(d,'%m/%d/%Y')
+    da = datetime.datetime.strptime(d,'%Y-%m-%d')
     month = calendar.month_name[int(da.month)]
     day = calendar.day_name[int(da.weekday())]
     return render_template('confirmation.html', theater=theater, title=title, da=da, day=day, month=month, t=t, movie=movie)

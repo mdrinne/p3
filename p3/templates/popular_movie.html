@@ -6,24 +6,27 @@
     <hr class="my-4">
   </div>
   <div class="row">
-    <div class="col-sm-4">
+    <div class="col-md-4">
       <h1>{{ month1_name }}</h1>
       {% for movie in month1 %}
-      <h4>{{ movie.title }}: {{ movie.count }}</h4>
+      <h4>{{ movie.title }}: {{ movie.count }} orders</h4>
       {% endfor %}
     </div>
-    <div class="col-sm-4">
+    <div class="col-md-4">
       <h1>{{ month2_name }}</h1>
       {% for movie in month2 %}
-      <h4>{{ movie.title }}: {{ movie.count }}</h4>
+      <h4>{{ movie.title }}: {{ movie.count }} orders</h4>
       {% endfor %}
     </div>
-    <div class="col-sm-4">
+    <div class="col-md-4">
       <h1>{{ month3_name }}</h1>
       {% for movie in month3 %}
-      <h4>{{ movie.title }}: {{ movie.count }}</h4>
+      <h4>{{ movie.title }}: {{ movie.count }} orders</h4>
       {% endfor %}
     </div>
   </div>
+  <br>
+  <a href="{{ url_for('manager') }}" class="btn" role="button" aria-pressed="true"
+    style="background-color: #291784; color: #FFFFFF;">Back</a>
 </div>
 {% endblock %}

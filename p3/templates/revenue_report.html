@@ -1,0 +1,15 @@
+{% extends "navbar.html" %}
+{% block body %}
+<div class="container">
+  <div class="jumbotron">
+    <h1 class="display-4">View Revenue Report</h1>
+    <hr class="my-4">
+  </div>
+  {% for revenue in revenues %}
+  <h1>{{ revenue['mon'] }}: ${{ revenue['total'] }}
+  {% endfor %}
+  <br>
+  <a href="{{ url_for('manager') }}" class="btn" role="button" aria-pressed="true"
+    style="background-color: #291784; color: #FFFFFF;">Back</a>
+</div>
+{% endblock %}
