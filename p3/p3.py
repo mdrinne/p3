@@ -77,7 +77,7 @@ def login():
                 session['logged_in'] = True
                 session['user'] = username
                 session['manager'] = True
-                return 'Hello, manager'
+                return redirect(url_for('manager'))
             else:
                 error = 'Incorrect Password'
 
@@ -149,6 +149,49 @@ def register():
                 else:
                     error = 'Manager password incorrect'
     return render_template('register.html', error=error)
+
+@app.route('/manager')
+def manager():
+    return render_template('manager.html')
+
+@app.route('/manager/revenue_report', methods=['GET'])
+def revenue_report():
+    return 'revenue_report'
+
+@app.route('/manager/popular_movie', methods=['GET'])
+def popular_movie():
+    db = get_db()
+    month1 = []
+    date = datetime.datetime.now()
+    month = date.month
+    year = date.year
+    month1_name = calendar.month_name[month]
+    temp = str(month) + '/%/' + str(year)
+    cur = db.execute('select title, count(*) as count from ORDERS where o_date like ? group by title order by count(*) desc limit 3;',[temp])
+    months = cur.fetchall()
+    for month in months:
+        month1.append(month)
+    date = date - datetime.timedelta(days=31)
+    month2 = []
+    month = date.month
+    year = date.year
+    month2_name = calendar.month_name[month]
+    temp = str(month) + '/%/' + str(year)
+    cur = db.execute('select title, count(*) as count from ORDERS where o_date like ? group by title order by count(*) desc limit 3;',[temp])
+    months = cur.fetchall()
+    for month in months:
+        month2.append(month)
+    date = date - datetime.timedelta(days=31)
+    month3 = []
+    month = date.month
+    year = date.year
+    month3_name = calendar.month_name[month]
+    temp = str(month) + '/%/' + str(year)
+    cur = db.execute('select title, count(*) as count from ORDERS where o_date like ? group by title order by count(*) desc limit 3;',[temp])
+    months = cur.fetchall()
+    for month in months:
+        month3.append(month)
+    return render_template('popular_movie.html', month1=month1, month1_name=month1_name, month2=month2, month2_name=month2_name, month3=month3, month3_name=month3_name)
 
 @app.route('/now_playing', methods=['GET','POST'])
 def now_playing():

@@ -1,0 +1,14 @@
+{% extends "navbar.html" %}
+{% block body %}
+<div class="container">
+  <div class="jumbotron">
+    <h1 class="display-4">Choose Functionality</h1>
+    <hr class="my-4">
+  </div>
+  <a href="{{ url_for('revenue_report') }}" class="font-weight-bold" style="color: #291784;">View Revenue Report</a>
+  <br>
+  <br>
+  <a href="{{ url_for('popular_movie') }}" class="font-weight-bold" style="color: #291784;">View Popular Movie Report</a>
+  <br><br>
+</div>
+{% endblock %}
