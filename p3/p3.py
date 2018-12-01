@@ -175,7 +175,28 @@ def me():
 
 @app.route('/order_history', methods=['GET', 'POST'])
 def order_history():
-    return 'order history'
+    db = get_db()
+    cur = db.execute('select * from ORDERS where username=?;',[session.get('user')])
+    orders = cur.fetchall()
+    cur = db.execute('select child_discount as disc from SYSTEM_INFO where child_discount is not null;')
+    c = cur.fetchone()
+    cur = db.execute('select senior_discount as disc from SYSTEM_INFO where senior_discount is not null;')
+    s = cur.fetchone()
+    o = []
+    for order in orders:
+        total = round((int(order['adult_tickets'])*11.54)+(int(order['child_tickets'])*11.54*c['disc'])+(int(order['senior_tickets'])*11.54*s['disc']),2)
+        if order['status'] == 'cancelled':
+            total = total - 5
+        o.append({'order_ID':order['order_ID'], 'title':order['title'], 'status':order['status'], 'total':total})
+    return render_template('order_history.html', orders=o, c=c, s=s)
+
+@app.route('/order_history/order_detail', methods=['GET','POST'])
+def order_detail():
+    id = int(request.form['search'])
+    db = get_db()
+    cur = db.execute('select * from ORDERS as o join Movie as m on o.title=m.title join THEATER as t on o.theater_id=t.theater_id where order_id=? and username=?;',[id,session.get('user')])
+    order = cur.fetchone()
+    return '{}'.format(id)
 
 @app.route('/payment_info', methods=['GET', 'POST'])
 def payment_info():
@@ -389,7 +410,6 @@ def add_card():
 
 @app.route('/movie/saved_card', methods=['GET','POST'])
 def saved_card():
-    # session['card'] = int(request.form['saved'])
     db = get_db()
     cur_date = datetime.datetime.now()
     cd = cur_date.strftime('%m/%d/%Y')

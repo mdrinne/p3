@@ -1,0 +1,55 @@
+{% extends "navbar.html" %}
+{% block body %}
+<div class="container">
+  <div class="jumbotron">
+    <h1 class="display-4">Order History</h1>
+    <hr class="my-4">
+  </div>
+  {% if not orders %}
+  <h2>You havent placed any orders yet</h2>
+  {% else %}
+  <form action="{{ url_for('order_detail') }}" method=post>
+    <div class="form-group row">
+      <label for="search" class="col-sm-1 col-form-label">Order ID</label>
+      <div class="col-sm-2">
+        <input type="number" class="form-control" id="search" name="search" placeholder="ID">
+      </div>
+      <div class="col-sm-1">
+        <button type="submit" class="btn" style="background-color: #291784; color: #FFFFFF;">Search</button>
+      </div>
+    </div>
+  </form>
+  <form action="{{ url_for('order_detail') }}" method=post>
+    <table class="table table-bordered">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">Select</th>
+          <th scope="col">Order ID</th>
+          <th scope="col">Movie</th>
+          <th scope="col">Status</th>
+          <th scope="col">Total Cost</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+        <tr>
+          <th scope="row">
+            <div style="padding-left: 20px">
+              <label class="form-check-label"></label>
+              <input type="radio" class="form-check-input" name="search" id="search" value="{{ order.order_ID }}">
+            </div>
+          </th>
+          <td>{{ order.order_ID }}</td>
+          <td>{{ order.title }}</td>
+          <td>{{ order.status }}</td>
+          <td>${{ order.total }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <button type="submit" class="btn" style="background-color: #291784; color: #FFFFFF;">View Detail</button>
+  </form>
+  <br><br><br>
+  {% endif %}
+</div>
+{% endblock %}
