@@ -99,13 +99,13 @@ def register():
         confirmPass = request.form['confirmPass']
         managerPass = request.form['managerPass']
         db = get_db()
-        cur = db.execute('select * from CUSTOMER where username=?;',[username])
+        cur = db.execute('select username from CUSTOMER where username=?;',[username])
         customer_username = cur.fetchone()
-        cur = db.execute('select * from CUSTOMER where email=?;',[email])
+        cur = db.execute('select email from CUSTOMER where email=?;',[email])
         customer_email = cur.fetchone()
-        cur = db.execute('select * from MANAGER where username=?;',[username])
+        cur = db.execute('select username from MANAGER where username=?;',[username])
         manager_username = cur.fetchone()
-        cur = db.execute('select * from MANAGER where email=?;',[email])
+        cur = db.execute('select email from MANAGER where email=?;',[email])
         manager_email = cur.fetchone()
         if not username:
             error = 'Must fill out all required fields'
@@ -137,7 +137,7 @@ def register():
                 flash('customer successfully added')
                 return redirect(url_for('login'))
             else:
-                cur = db.execute('select * from SYSTEM_INFO where manager_password is not null;')
+                cur = db.execute('select manager_password from SYSTEM_INFO where manager_password is not null;')
                 manager_password = cur.fetchone()
 
                 if managerPass == manager_password[1]:
@@ -239,7 +239,7 @@ def me():
 @app.route('/order_history', methods=['GET', 'POST'])
 def order_history():
     db = get_db()
-    cur = db.execute('select * from ORDERS where username=?;',[session.get('user')])
+    cur = db.execute('select order_ID, title, status, adult_tickets, senior_tickets, child_tickets from ORDERS where username=?;',[session.get('user')])
     orders = cur.fetchall()
     cur = db.execute('select child_discount as disc from SYSTEM_INFO where child_discount is not null;')
     c = cur.fetchone()
@@ -257,7 +257,7 @@ def order_history():
 def order_detail():
     id = int(request.form['search'])
     db = get_db()
-    cur = db.execute('select * from ORDERS as o join Movie as m on o.title=m.title join THEATER as t on o.theater_id=t.theater_id where order_id=? and username=?;',[id,session.get('user')])
+    cur = db.execute('select order_ID, o_date, adult_tickets, senior_tickets, child_tickets, o_time, status, title, length, name, state, city, street, zip, rating from ORDERS as o natural join Movie as m join THEATER as t on o.theater_id=t.theater_id where order_id=? and username=?;',[id,session.get('user')])
     order = cur.fetchone()
     if not order:
         return render_template('nope.html')
@@ -284,7 +284,7 @@ def cancel():
 @app.route('/payment_info', methods=['GET', 'POST'])
 def payment_info():
     db = get_db()
-    cur = db.execute('select *  from PAYMENT_INFO where username=? and saved=1;',[session.get('user')])
+    cur = db.execute('select card_no, name_on_card, expiration_date from PAYMENT_INFO where username=? and saved=1;',[session.get('user')])
     cards = cur.fetchall()
     if request.method == 'POST':
         delete = request.form['delete']
@@ -296,7 +296,7 @@ def payment_info():
 @app.route('/preferred_theater', methods=['GET', 'POST'])
 def preferred_theater():
     db = get_db()
-    cur = db.execute('select * from PREFERS natural join THEATER where username=?;',[session.get('user')])
+    cur = db.execute('select name, city, street, zip, state from PREFERS natural join THEATER where username=?;',[session.get('user')])
     theaters = cur.fetchall()
     if request.method == 'POST':
         delete = request.form['delete']
@@ -309,16 +309,16 @@ def preferred_theater():
 @app.route('/movie/<title>/overview', methods=['GET','POST'])
 def overview(title):
     db = get_db()
-    cur = db.execute('select * from MOVIE where title=?;',[title])
+    cur = db.execute('select title, synopsis from MOVIE where title=?;',[title])
     movie = cur.fetchone()
-    cur = db.execute('select * from CAST where mtitle=?',[title])
+    cur = db.execute('select actor, role from CAST where mtitle=?',[title])
     cast = cur.fetchall()
     return render_template('overview.html', movie=movie, cast=cast)
 
 @app.route('/movie/<title>/review')
 def review(title):
     db = get_db()
-    cur = db.execute('select * from REVIEW where mtitle=?',[title])
+    cur = db.execute('select title, comment, rating from REVIEW where mtitle=?',[title])
     reviews = cur.fetchall()
     cur = db.execute('select avg(rating) as avg from REVIEW where mtitle=?;',[title])
     rating = cur.fetchone()
@@ -341,15 +341,15 @@ def search_theaters(title):
     search = request.form['search']
     db = get_db()
     if not search:
-        cur = db.execute('select * from PLAYS_AT as p join THEATER as t on p.tID=t.theater_id where mtitle=?;',[title])
+        cur = db.execute('select name, state, city, street, zip from PLAYS_AT as p join THEATER as t on p.tID=t.theater_id where mtitle=?;',[title])
         all = cur.fetchall()
         return render_template('search_results.html', title=title, names=None, cities=None, states=None, all=all)
     else:
-        cur = db.execute('select * from PLAYS_AT as p join THEATER as t on p.tID=t.theater_id where name=? and mtitle=?;',[search,title])
+        cur = db.execute('select name, state, city, street, zip from PLAYS_AT as p join THEATER as t on p.tID=t.theater_id where name=? and mtitle=?;',[search,title])
         names = cur.fetchall()
-        cur = db.execute('select * from PLAYS_AT as p join THEATER as t on p.tID=t.theater_id where city=? and mtitle=?;',[search,title])
+        cur = db.execute('select name, state, city, street, zip from PLAYS_AT as p join THEATER as t on p.tID=t.theater_id where city=? and mtitle=?;',[search,title])
         cities = cur.fetchall()
-        cur = db.execute('select * from PLAYS_AT as p join THEATER as t on p.tID=t.theater_id where state=? and mtitle=?;',[search,title])
+        cur = db.execute('select name, state, city, street, zip from PLAYS_AT as p join THEATER as t on p.tID=t.theater_id where state=? and mtitle=?;',[search,title])
         states = cur.fetchall()
         all = []
         return render_template('search_results.html', title=title, names=names, cities=cities, states=states, all=None)
@@ -383,7 +383,7 @@ def select_time(title,theater):
     showtimes = cur.fetchall()
     for showtime in showtimes:
         times.append(showtime['showtime'])
-    cur = db.execute('select * from MOVIE where title=?;',[title])
+    cur = db.execute('select title, length, rating, genre from MOVIE where title=?;',[title])
     movie = cur.fetchone()
     return render_template('select_time.html', title=title, theater=theater, dates=dates, times=times, movie=movie)
 
@@ -395,9 +395,9 @@ def tickets(title,theater):
         t = request.form['time']
         session['time'] = t
     db = get_db()
-    cur = db.execute('select * from THEATER where name=?;',[theater])
+    cur = db.execute('select name, state, city, street, zip from THEATER where name=?;',[theater])
     theater = cur.fetchone()
-    cur = db.execute('select * from MOVIE where title=?;',[title])
+    cur = db.execute('select title, length, rating from MOVIE where title=?;',[title])
     movie = cur.fetchone()
     cur = db.execute('select child_discount as disc from SYSTEM_INFO where child_discount is not null;')
     child = cur.fetchone()
@@ -417,9 +417,9 @@ def card_info(title,theater):
         session['senior'] = request.form['senior']
         session['child'] = request.form['child']
     db = get_db()
-    cur = db.execute('select * from THEATER where name=?;',[theater])
+    cur = db.execute('select name, state, city, street, zip from THEATER where name=?;',[theater])
     theater = cur.fetchone()
-    cur = db.execute('select * from MOVIE where title=?;',[title])
+    cur = db.execute('select title, length, rating from MOVIE where title=?;',[title])
     movie = cur.fetchone()
     cur = db.execute('select child_discount as disc from SYSTEM_INFO where child_discount is not null;')
     c = cur.fetchone()
@@ -476,9 +476,6 @@ def add_card():
         db.execute('insert into PAYMENT_INFO values (?,?,?,?,?,?)',
             [cardno,cvv,cname,exp,0,session.get('user')])
         db.commit()
-    # session['card'] = cardno
-    # cd = cur_date.strftime('%m/%d/%Y')
-    # ct = cur_date.strftime('%I:%M%p')
     tt = int(session.get('adult')) + int(session.get('child')) + int(session.get('senior'))
     cur = db.execute('select theater_id from THEATER where name=?;',[session.get('theater')])
     tID = cur.fetchone()
@@ -494,9 +491,6 @@ def add_card():
 @app.route('/movie/saved_card', methods=['GET','POST'])
 def saved_card():
     db = get_db()
-    # cur_date = datetime.datetime.now()
-    # cd = cur_date.strftime('%m/%d/%Y')
-    # ct = cur_date.strftime('%I:%M%p')
     tt = int(session.get('adult')) + int(session.get('child')) + int(session.get('senior'))
     cur = db.execute('select theater_id from THEATER where name=?;',[session.get('theater')])
     tID = cur.fetchone()
@@ -514,9 +508,9 @@ def confirmation():
     theater = session.get('theater')
     title = session.get('title')
     db = get_db()
-    cur = db.execute('select * from THEATER where name=?;',[theater])
+    cur = db.execute('select name, state, city, street, zip from THEATER where name=?;',[theater])
     theater = cur.fetchone()
-    cur = db.execute('select * from MOVIE where title=?;',[title])
+    cur = db.execute('select title, length, rating from MOVIE where title=?;',[title])
     movie = cur.fetchone()
     d = session.get('date')
     t = session.get('time')
