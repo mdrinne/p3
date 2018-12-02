@@ -165,13 +165,15 @@ def revenue_report():
     c = cur.fetchone()
     cur = db.execute('select senior_discount as disc from SYSTEM_INFO where senior_discount is not null;')
     s = cur.fetchone()
+    cur = db.execute('select cancellation_fee from SYSTEM_INFO where cancellation_fee is not null;')
+    fee = cur.fetchone()
     revenues = []
     for month in months:
         total = (int(month['a_t'])*11.54) + (int(month['s_t'])*11.54*s['disc']) + (int(month['c_t'])*11.54*c['disc'])
         total = round(total, 2)
         for can in canc:
             if can['m'] == month['m']:
-                total = total + (int(can['c']) * 5)
+                total = total + (int(can['c']) * int(fee['cancellation_fee']))
         date = datetime.datetime.strptime(month['m'],'%m')
         mon = calendar.month_name[date.month]
         revenues.append({'total':total, 'mon':mon})
@@ -246,10 +248,12 @@ def order_history():
     cur = db.execute('select senior_discount as disc from SYSTEM_INFO where senior_discount is not null;')
     s = cur.fetchone()
     o = []
+    cur = db.execute('select cancellation_fee from SYSTEM_INFO where cancellation_fee is not null;')
+    fee = cur.fetchone()
     for order in orders:
         total = round((int(order['adult_tickets'])*11.54)+(int(order['child_tickets'])*11.54*c['disc'])+(int(order['senior_tickets'])*11.54*s['disc']),2)
         if order['status'] == 'cancelled':
-            total = total - 5
+            total = total - int(fee['cancellation_fee'])
         o.append({'order_ID':order['order_ID'], 'title':order['title'], 'status':order['status'], 'total':total})
     return render_template('order_history.html', orders=o, c=c, s=s)
 
@@ -268,9 +272,11 @@ def order_detail():
     c = cur.fetchone()
     cur = db.execute('select senior_discount as disc from SYSTEM_INFO where senior_discount is not null;')
     s = cur.fetchone()
+    cur = db.execute('select cancellation_fee from SYSTEM_INFO where cancellation_fee is not null;')
+    fee = cur.fetchone()
     total = round((int(order['adult_tickets'])*11.54)+(int(order['child_tickets'])*11.54*c['disc'])+(int(order['senior_tickets'])*11.54*s['disc']),2)
     if order['status'] == 'cancelled':
-        total = total - 5
+        total = total - int(fee['cancellation_fee'])
     session['cancel'] = order['order_ID']
     return render_template('order_detail.html', order=order, da=da, day=day, month=month, total=total, id=id)
 
