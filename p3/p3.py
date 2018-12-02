@@ -218,7 +218,7 @@ def popular_movie():
 @app.route('/now_playing', methods=['GET','POST'])
 def now_playing():
     db = get_db()
-    cur = db.execute('select * from PLAYS_AT where playing=1 group by mtitle;')
+    cur = db.execute('select mtitle from PLAYS_AT where playing=1 group by mtitle;')
     movies = cur.fetchall()
     return render_template('now_playing.html', movies=movies)
 
