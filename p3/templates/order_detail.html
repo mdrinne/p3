@@ -26,7 +26,7 @@
   <br>
   <h4>Total: ${{ total }}</h4>
   <br>
-  {% if order.status != 'cancelled' %}
+  {% if order.status != 'cancelled' and order.status != 'completed' %}
   <a href="{{ url_for('cancel') }}" class="btn" style="background-color: #291784; color: #FFFFFF;">Cancel order</a>
   {% endif %}
   <br><br>

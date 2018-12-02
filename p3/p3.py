@@ -288,7 +288,7 @@ def payment_info():
     cards = cur.fetchall()
     if request.method == 'POST':
         delete = request.form['delete']
-        db.execute('delete from PAYMENT_INFO where card_no=?;',[delete])
+        db.execute('update PAYMENT_INFO set saved=0 where card_no=?;',[delete])
         db.commit()
         return redirect(url_for('payment_info', cards=cards))
     return render_template('payment_info.html', cards=cards)
@@ -533,7 +533,7 @@ def give_review(title):
         rtitle = request.form['rtitle']
         comment = request.form['comment']
         db = get_db()
-        cur = db.execute('select * from ORDERS where title=? and status="completed"', [title])
+        cur = db.execute('select * from ORDERS where title=? and status="completed" and username=?;', [title, session.get('user')])
         check = cur.fetchone()
         if rtitle is None or rtitle == '':
             error = 'Must give review a title'
