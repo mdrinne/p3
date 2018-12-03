@@ -306,7 +306,7 @@ def preferred_theater():
     theaters = cur.fetchall()
     if request.method == 'POST':
         delete = request.form['delete']
-        db.execute('delete from PREFERS where theater_id=(?) and username=(?)',
+        db.execute('delete from PREFERS where theater_id=(?) and username=(?);',
             [delete,session.get('user')])
         db.commit()
         return redirect(url_for('preferred_theater', theaters=theaters))
@@ -317,14 +317,14 @@ def overview(title):
     db = get_db()
     cur = db.execute('select title, synopsis from MOVIE where title=?;',[title])
     movie = cur.fetchone()
-    cur = db.execute('select actor, role from CAST where mtitle=?',[title])
+    cur = db.execute('select actor, role from CAST where mtitle=?;',[title])
     cast = cur.fetchall()
     return render_template('overview.html', movie=movie, cast=cast)
 
 @app.route('/movie/<title>/review')
 def review(title):
     db = get_db()
-    cur = db.execute('select title, comment, rating from REVIEW where mtitle=?',[title])
+    cur = db.execute('select title, comment, rating from REVIEW where mtitle=?;',[title])
     reviews = cur.fetchall()
     cur = db.execute('select avg(rating) as avg from REVIEW where mtitle=?;',[title])
     rating = cur.fetchone()
@@ -366,9 +366,9 @@ def check_save(title):
     save = request.form.get('save', False)
     if save:
         db = get_db()
-        cur = db.execute('select theater_id from THEATER where name=?',[theater])
+        cur = db.execute('select theater_id from THEATER where name=?;',[theater])
         id = cur.fetchone()
-        cur = db.execute('select * from PREFERS where theater_id=? and username=?',[id['theater_id'],session.get('user')])
+        cur = db.execute('select * from PREFERS where theater_id=? and username=?;',[id['theater_id'],session.get('user')])
         temp = cur.fetchone()
         if not temp:
             db.execute('insert into PREFERS (theater_id,username) values (?,?);',[id['theater_id'],session.get('user')])
@@ -488,7 +488,7 @@ def add_card():
     db.execute('insert into ORDERS (o_date,senior_tickets,child_tickets,adult_tickets,total_tickets,o_time,status,card_number,username,title,theater_id) values (?,?,?,?,?,?,?,?,?,?,?);',
         [session.get('date'),int(session.get('senior')),int(session.get('child')),int(session.get('adult')),int(tt),session.get('time'),'unused',int(cardno),session.get('user'),session.get('title'),int(tID['theater_id'])])
     db.commit()
-    cur = db.execute('select order_ID from ORDERS where o_date=? and o_time=? and card_number=? and username=? and title=? and theater_id=?',
+    cur = db.execute('select order_ID from ORDERS where o_date=? and o_time=? and card_number=? and username=? and title=? and theater_id=?;',
                         [session.get('date'),session.get('time'),cardno,session.get('user'),session.get('title'),int(tID['theater_id'])])
     oID = cur.fetchone()
     session['oID'] = oID['order_ID']
