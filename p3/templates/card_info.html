@@ -26,6 +26,11 @@
   <form action="{{ url_for('saved_card') }}" method=post>
     <div class="row">
       <label for="saved" class="col-sm-2 col-form-label">Use a saved card</label>
+      {% if not cards %}
+      <div class="col">
+        <h4>you currently have no saved cars</h4>
+      </div>
+      {% else %}
       <div class="col-sm-2">
         <select class="form-control" id="saved" name="saved">
           {% for card in cards %}
@@ -34,6 +39,7 @@
         </select>
       </div>
       <button type="submit" class="btn" style="background-color: #291784; color: #FFFFFF;">Buy Ticket</button>
+      {% endif %}
     </div>
   </form>
   <hr class="my-4">

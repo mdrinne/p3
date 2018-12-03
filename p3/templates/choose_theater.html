@@ -8,6 +8,11 @@
   <form action="{{ url_for('pick_time', title=title) }}" method=post>
     <div class="form-group row">
       <label for="theater" class="col-sm-2 col-form-label">Saved Theater</label>
+      {% if not prefers %}
+      <div class="col">
+        <h4>you currently have no preferred theaters</h4>
+      </div>
+      {% else %}
       <div class="col-sm-4">
         <select class="form-control" id="theater" name="theater">
           {% for theater in prefers %}
@@ -18,6 +23,7 @@
       <div class="col-sm-2">
         <button type="submit" class="btn" style="background-color: #291784; color: #FFFFFF;">Choose</button>
       </div>
+      {% endif %}
     </div>
   </form>
   <form action="{{ url_for('search_theaters', title=title) }}" method=post>
