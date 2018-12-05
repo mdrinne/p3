@@ -72,7 +72,7 @@ def login():
             else:
                 error = 'Incorrect Password'
         else:
-            if password == manager[1]:
+            if password == manager[0]:
                 session.clear()
                 session['logged_in'] = True
                 session['user'] = username
@@ -140,7 +140,7 @@ def register():
                 cur = db.execute('select manager_password from SYSTEM_INFO where manager_password is not null;')
                 manager_password = cur.fetchone()
 
-                if managerPass == manager_password[1]:
+                if managerPass == manager_password[0]:
                     db.execute('insert into MANAGER (username, email, password) values (?,?,?);',
                         [username,email,password])
                     db.commit()
@@ -157,7 +157,7 @@ def manager():
 @app.route('/manager/revenue_report', methods=['GET'])
 def revenue_report():
     db = get_db()
-    cur = db.execute('select strftime("%m", o_date) as m, sum(adult_tickets) as a_t, sum(child_tickets) as c_t, sum(senior_tickets) as s_t from ORDERS where status!="cancelled" group by strftime("%m", o_date) order by m desc;')
+    cur = db.execute('select strftime("%m", o_date) as m, sum(adult_tickets) as a_t, sum(child_tickets) as c_t, sum(senior_tickets) as s_t from ORDERS where status!="cancelled" group by strftime("%m", o_date) order by m desc limit 3;')
     months = cur.fetchall()
     cur = db.execute('select strftime("%m", o_date) as m, count(*) as c from ORDERS where status="cancelled" group by strftime("%m", o_date);')
     canc = cur.fetchall()
@@ -187,7 +187,7 @@ def popular_movie():
     month = date.month
     month1_name = calendar.month_name[month]
     temp = date.strftime('%Y-%m') + '%'
-    cur = db.execute('select title, count(*) as count from ORDERS where o_date like ? group by title order by count(*) desc limit 3;',[str(temp)])
+    cur = db.execute('select title, count(*) as count from ORDERS where o_date like ? and status != "cancelled" group by title order by count(*) desc limit 3;',[str(temp)])
     months = cur.fetchall()
     if not months:
         return 'nope'
@@ -199,7 +199,7 @@ def popular_movie():
     year = date.year
     month2_name = calendar.month_name[month]
     temp = str(year) + '-' + str(month) + '-%'
-    cur = db.execute('select title, count(*) as count from ORDERS where o_date like ? group by title order by count(*) desc limit 3;',[temp])
+    cur = db.execute('select title, count(*) as count from ORDERS where o_date like ? and status != "cancelled" group by title order by count(*) desc limit 3;',[temp])
     months = cur.fetchall()
     for month in months:
         month2.append(month)
@@ -209,7 +209,7 @@ def popular_movie():
     year = date.year
     month3_name = calendar.month_name[month]
     temp = str(year) + '-' + str(month) + '-%'
-    cur = db.execute('select title, count(*) as count from ORDERS where o_date like ? group by title order by count(*) desc limit 3;',[temp])
+    cur = db.execute('select title, count(*) as count from ORDERS where o_date like ? and status != "cancelled" group by title order by count(*) desc limit 3;',[temp])
     months = cur.fetchall()
     for month in months:
         month3.append(month)
@@ -302,7 +302,7 @@ def payment_info():
 @app.route('/preferred_theater', methods=['GET', 'POST'])
 def preferred_theater():
     db = get_db()
-    cur = db.execute('select name, city, street, zip, state from PREFERS natural join THEATER where username=?;',[session.get('user')])
+    cur = db.execute('select name, city, street, zip, state, theater_id from PREFERS natural join THEATER where username=?;',[session.get('user')])
     theaters = cur.fetchall()
     if request.method == 'POST':
         delete = request.form['delete']
