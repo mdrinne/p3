@@ -457,7 +457,6 @@ def add_card():
         error = 'Must fill out all fields'
         return render_template('error.html', error=error, theater=session.get('theater'))
     cur_date = datetime.datetime.now()
-    d = request.form.get('exp')
     date = datetime.datetime.strptime(request.form['exp'],'%m/%Y')
     if (cur_date.year < date.year):
         if (cur_date.month < date.month):
