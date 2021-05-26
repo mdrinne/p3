@@ -19,6 +19,7 @@ steps:
     pip install datetime
     pip install calendar
     pip install flask
+    pip install setuptools
   displayName: 'Install dependancies'
 
 - script: |
