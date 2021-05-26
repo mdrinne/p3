@@ -13,16 +13,16 @@ steps:
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
 
-# - script: |
-#     python -m pip install --upgrade pip
-#     pip install sqlite3
-#     pip install datetime
-#     pip install calendar
-#     pip install flask
-#   displayName: 'Install dependancies'
+- script: |
+    python -m pip install --upgrade pip
+    pip install sqlite3
+    pip install datetime
+    pip install calendar
+    pip install flask
+  displayName: 'Install dependancies'
 
-# - script: |
-#     export FLASK_APP=p3
-#     export FLASK_DEBUG=true
-#     flask run
-#   displayName: 'Run App'
+- script: |
+    export FLASK_APP=p3
+    export FLASK_DEBUG=true
+    flask run
+  displayName: 'Run App'
