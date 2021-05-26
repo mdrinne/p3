@@ -1,0 +1,28 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- script: echo Hello, world!
+  displayName: 'Run a one-line script'
+
+- script: |
+    python -m pip install --upgrade pip
+    pip install sqlite3
+    pip install datetime
+    pip install calendar
+    pip install flask
+  displayName: 'Install dependancies'
+
+- script: |
+    export FLASK_APP=p3
+    export FLASK_DEBUG=true
+    flask run
+  displayName: 'Run App'
